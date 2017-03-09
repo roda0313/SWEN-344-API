@@ -1,1 +1,0 @@
-/* Team Book Store tables */
