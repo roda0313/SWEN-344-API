@@ -17,3 +17,4 @@ then
 	sqlite3 $fileName < "TeamFacilityManagement.sql";
 fi
 
+chmod a+rwx $fileName;

@@ -1,16 +1,24 @@
 <?php
 
-$salt = "SWEN344ISAWESOME";
 $errorLogFile = "errors.txt";
-$databaseFile = "../Database/SWEN344DB.db";
+$databaseFile = getcwd(). "/../Database/SWEN344DB.db";
 
 $sqliteDebug = true; //SET TO FALSE BEFORE OFFICIAL RELEASE
+
+//////////////////////
+//General Functions///
+//////////////////////
+
+function APITest()
+{
+	return "API Connection Success!";
+}
 
 function logError($message)
 {
 	try 
 	{
-		$myfile = fopen($errorLogFile, "a");
+		$myfile = fopen($GLOBALS ["errorLogFile"], "a");
 		fwrite($myfile, ($message . "\n"));
 		fclose($myfile);
 	}
@@ -21,32 +29,34 @@ function logError($message)
 }
 function encrypt($string)
 {
-	$hash = crypt($string, $salt);
-	return $hash;
+	return password_hash($string, PASSWORD_DEFAULT);
 }
 
-function queryDatabase($queryString)
+//username and PLAIN TEXT password
+function loginValid($username, $password)
 {
+	$valid = FALSE;
+	//return $GLOBALS ["databaseFile"];
 	try 
 	{
-		$sqlite = SQLite3($databaseFile);
-		$sqliteResult = $sqlite->query($queryString);
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		
-		if (!$sqliteResult and $sqliteDebug) 
-		{
-			// the query failed and debugging is enabled
-			echo "<p>There was an error in query: $query</p>";
-			echo $sqlite->lastErrorMsg();
-		}
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM STUDENTS WHERE USERNAME=:username");
+		$query->bindParam(':username', $username);		
+		$query->execute();
 		
-		if ($sqliteResult) 
+		
+		//$sqliteResult = $sqlite->query($queryString);
+
+		if ($record = $query->fetchArray()) 
 		{
-			if ($record = $sqliteResult->fetchArray()) 
+			if ($record['USERNAME'] == $username && password_verify(encrypt($password), $record['PASSWORD']))
 			{
-				//record was found, do stuff
+				$valid = TRUE;
 			}
 		}
-		
+	
 		$sqliteResult->finalize();
 		
 		// clean up any objects
@@ -54,17 +64,18 @@ function queryDatabase($queryString)
 	}
 	catch (Exception $exception)
 	{
-		if ($sqliteDebug) {
-			echo $exception->getMessage();
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
 		}
 	}
-}
-
-function loginValid($username, $password)
-{
-	$valid = FALSE;
 	
+	return $valid;
 }
 
+
+////////////////
+//team based functions
+///////////////
 
 ?>
