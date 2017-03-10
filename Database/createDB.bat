@@ -15,5 +15,5 @@ IF "%selection%" == "y" (
 	sqlite3 %fileName% < "TeamHumanResources.sql"
 	sqlite3 %fileName% < "TeamEnrollment.sql"
 	sqlite3 %fileName% < "TeamFacilityManagement.sql"
-) 
-pause
+)
+pause 
