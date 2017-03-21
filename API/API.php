@@ -65,7 +65,7 @@ function loginValid($username, $password)
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT * FROM USERS WHERE USERNAME=:username");
+		$query = $sqlite->prepare("SELECT * FROM User WHERE USERNAME=:username");
 		$query->bindParam(':username', $username);		
 		$query->execute();
 		
