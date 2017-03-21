@@ -27,11 +27,11 @@ function general_switch()
 			case "test":
 				return APITest();
 			case "logError":
-				return logError();
+				return logError($_GET["message"]);
 			case "encrypt":
-				return encrypt();
+				return encrypt($_GET["string"]);
 			case "loginValid":
-				return loginValid();
+				return loginValid($_GET["username"], $_GET["password"]);
 		}
 	}
 }
