@@ -1,14 +1,45 @@
 <?php
 
+// initial result of the api
+$result = "An error has occurred";
+
+// needed globals
 $errorLogFile = "errors.txt";
 $databaseFile = getcwd(). "/../Database/SWEN344DB.db";
 
+// debug switch
 $sqliteDebug = true; //SET TO FALSE BEFORE OFFICIAL RELEASE
 
 //////////////////////
 //General Functions///
 //////////////////////
 
+// Switchboard to General Functions
+function general_switch()
+{
+	// Define the possible general function URLs which the page can be accessed from
+	$possible_function_url = array("test", "logError", "encrypt", "loginValid");
+
+	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
+	{
+		switch ($_GET["function"])
+		{
+			case "test":
+				$result = APITest();
+				break;
+			case "logError":
+				$result = logError();
+				break;
+			case "encrypt":
+				$result = encrypt();
+				break;
+			case "loginValid":
+				$result = loginValid();
+				break;
+		}
+	}
+}
+	
 function APITest()
 {
 	return "API Connection Success!";
@@ -74,8 +105,184 @@ function loginValid($username, $password)
 }
 
 
-////////////////
-//team based functions
-///////////////
+////////////////////////
+//Team Based Functions//
+////////////////////////
+
+//////////////
+//Book Store//
+//////////////
+
+// Switchboard to Book Store Functions
+function book_store_switch()
+{
+	// Define the possible Book Store function URLs which the page can be accessed from
+	$possible_function_url = array();
+
+	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
+	{
+		switch ($_GET["function"])
+		{
+			
+		}
+	}
+}
+
+//Define Functions Here
+
+
+
+///////////////////
+//Human Resources//
+///////////////////
+
+// Switchboard to Human Resources Functions
+function human_resources_switch()
+{
+	// Define the possible Human Resources function URLs which the page can be accessed from
+	$possible_function_url = array();
+
+	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
+	{
+		switch ($_GET["function"])
+		{
+			
+		}
+	}
+}
+
+//Define Functions Here
+
+
+
+/////////////////////////
+//Facilities Management//
+/////////////////////////
+
+// Switchboard to Facilities Management Functions
+function facility_management_switch()
+{
+	// Define the possible Facilities Management function URLs which the page can be accessed from
+	$possible_function_url = array();
+
+	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
+	{
+		switch ($_GET["function"])
+		{
+			
+		}
+	}
+}
+
+//Define Functions Here
+
+
+
+//////////////////////
+//Student Enrollment//
+//////////////////////
+
+// Switchboard to Student Enrollment Functions
+function student_enrollment_switch()
+{
+	// Define the possible Student Enrollment function URLs which the page can be accessed from
+	$possible_function_url = array();
+
+	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
+	{
+		switch ($_GET["function"])
+		{
+			
+		}
+	}
+}
+
+//Define Functions Here
+
+
+
+////////////////////
+//Co-op Evaluation//
+////////////////////
+
+// Switchboard to Co-op Evaluation Functions
+function coop_eval_switch_switch()
+{
+	// Define the possible Co-op Evaluation function URLs which the page can be accessed from
+	$possible_function_url = array();
+
+	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
+	{
+		switch ($_GET["function"])
+		{
+			
+		}
+	}
+}
+
+//Define Functions Here
+
+
+
+///////////
+//Grading//
+///////////
+
+// Switchboard to Grading Functions
+function grading_switch()
+{
+	// Define the possible Grading function URLs which the page can be accessed from
+	$possible_function_url = array();
+
+	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
+	{
+		switch ($_GET["function"])
+		{
+			
+		}
+	}
+}
+
+//Define Functions Here
+
+
+
+/////////////////////
+//API Master Switch//
+/////////////////////
+
+// Define the possible team URLs which the page can be accessed from
+$possible_url = array("general", "book_store", "human_resources", "facility_management", "student_enrollment", "coop_eval", "grading");
+
+if (isset($_GET["team"]) && in_array($_GET["team"], $possible_url))
+{
+  switch ($_GET["team"])
+    {
+	  case "general":
+	    $result = general_switch();
+        break;
+      case "book_store":
+        $result = book_store_switch();
+        break;
+      case "human_resources":
+        $result = human_resources_switch();
+        break;
+	  case "facility_management":
+        $result = facility_management_switch();
+        break;
+      case "student_enrollment":
+        $result = student_enrollment_switch();
+        break;
+	  case "coop_eval":
+        $result = coop_eval_switch();
+        break;
+      case "grading":
+        $result = grading_switch();
+        break;
+    }
+}
+
+//return JSON array
+exit(json_encode($result));
 
 ?>
