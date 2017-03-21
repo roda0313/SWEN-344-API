@@ -25,17 +25,13 @@ function general_switch()
 		switch ($_GET["function"])
 		{
 			case "test":
-				$result = APITest();
-				break;
+				return APITest();
 			case "logError":
-				$result = logError();
-				break;
+				return logError();
 			case "encrypt":
-				$result = encrypt();
-				break;
+				return encrypt();
 			case "loginValid":
-				$result = loginValid();
-				break;
+				return loginValid();
 		}
 	}
 }
