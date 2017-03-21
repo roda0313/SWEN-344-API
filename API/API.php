@@ -179,10 +179,10 @@ function student_enrollment_switch()
 {
 	// Define the possible Student Enrollment function URLs which the page can be accessed from
 	$possible_function_url = array("getStudent", "postStudent", "getInstructor", "getAdmin", "getCourse",
-									"postCourse", "getCourseList", "toggleCourse", "getSection", "getCourseSections",
-									"postSection", "deleteSection", "getSectionList", "getStudentGrades", "getStudentSections",
-									"getInstructorSections", "getBook", "getSectionBook", "getRoom", "getCurrentTerm", "getTerm",
-									"postTerm", "enrollStudent", "waitlistStudent", "postBook", "withdrawStudent");
+					"postCourse", "getCourseList", "toggleCourse", "getSection", "getCourseSections",
+					"postSection", "deleteSection", "getSectionList", "getStudentGrades", "getStudentSections",
+					"getInstructorSections", "getBook", "getSectionBook", "getRoom", "getCurrentTerm", "getTerm",
+					"postTerm", "enrollStudent", "waitlistStudent", "postBook", "withdrawStudent");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
