@@ -18,7 +18,7 @@ $sqliteDebug = true; //SET TO FALSE BEFORE OFFICIAL RELEASE
 function general_switch()
 {
 	// Define the possible general function URLs which the page can be accessed from
-	$possible_function_url = array("test", "logError", "encrypt", "loginValid");
+	$possible_function_url = array("test", "loginValid");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
@@ -26,10 +26,6 @@ function general_switch()
 		{
 			case "test":
 				return APITest();
-			case "logError":
-				return logError($_GET["message"]);
-			case "encrypt":
-				return encrypt($_GET["string"]);
 			case "loginValid":
 				return loginValid($_GET["username"], $_GET["password"]);
 		}
