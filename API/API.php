@@ -256,30 +256,30 @@ $possible_url = array("general", "book_store", "human_resources", "facility_mana
 
 if (isset($_GET["team"]) && in_array($_GET["team"], $possible_url))
 {
-  switch ($_GET["team"])
-    {
-	  case "general":
-	    $result = general_switch();
-        break;
-      case "book_store":
-        $result = book_store_switch();
-        break;
-      case "human_resources":
-        $result = human_resources_switch();
-        break;
-	  case "facility_management":
-        $result = facility_management_switch();
-        break;
-      case "student_enrollment":
-        $result = student_enrollment_switch();
-        break;
-	  case "coop_eval":
-        $result = coop_eval_switch();
-        break;
-      case "grading":
-        $result = grading_switch();
-        break;
-    }
+	switch ($_GET["team"])
+	{
+		case "general":
+			$result = general_switch();
+			break;
+		case "book_store":
+			$result = book_store_switch();
+			break;
+		case "human_resources":
+			$result = human_resources_switch();
+			break;
+		case "facility_management":
+			$result = facility_management_switch();
+			break;
+		case "student_enrollment":
+			$result = student_enrollment_switch();
+			break;
+		case "coop_eval":
+			$result = coop_eval_switch();
+			break;
+		case "grading":
+			$result = grading_switch();
+			break;
+	}
 }
 
 //return JSON array
