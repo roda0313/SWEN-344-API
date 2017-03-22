@@ -78,13 +78,15 @@ function logError($message)
 		//what should happen if this fails???
 	}
 }
+
+//to decrypt this hash you NEED to use password_verify($password, $hash)
 function encrypt($string)
 {
 	return password_hash($string, PASSWORD_DEFAULT);
 }
 
 //to create prof or admin simply use this function with the correct flags
-//This also checks if username is valid
+//This also checks if username is valid and encrypts the plain text password
 //returns true if successful, else false
 function createUser($username, $password, $fname, $lname, $email, $isProf, $isAdmin)
 {
@@ -112,7 +114,7 @@ function createUser($username, $password, $fname, $lname, $email, $isProf, $isAd
 		$query = $sqlite->prepare("INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL) VALUES (:username, :password, :fname, :lname, :email)");
 		
 		$query->bindParam(':username', $username);		
-		$query->bindParam(':password', $password);	
+		$query->bindParam(':password', encrypt($password));	
 		$query->bindParam(':fname', $fname);	
 		$query->bindParam(':lname', $lname);
 		$query->bindParam(':email', $email);
