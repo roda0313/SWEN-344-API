@@ -18,7 +18,8 @@ $sqliteDebug = true; //SET TO FALSE BEFORE OFFICIAL RELEASE
 function general_switch()
 {
 	// Define the possible general function URLs which the page can be accessed from
-	$possible_function_url = array("test", "loginValid", "createUser");
+	$possible_function_url = array("test", "loginValid", "createUser", "getStudent", "postStudent", "getInstructor",
+					"getAdmin", "getCourse", "postCourse");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
@@ -36,6 +37,36 @@ function general_switch()
 					logError("loginValid ~ Required parameters were not submit correctly.");
 					return FALSE;
 				}
+			case "getStudent":
+				// if has params
+				return getStudent();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "postStudent":
+				// if has params
+				return postStudent();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getInstructor":
+				// if has params
+				return getInstructor();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getAdmin":
+				// if has params
+				return getAdmin();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getCourse":
+				// if has params
+				return getCourse();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "postCourse":
+				// if has params
+				return postCourse();
+				// else
+				// return "Missing " . $_GET["param-name"]
 			case "createUser":
 				if (isset($_POST["username"]) &&
 					isset($_POST["password"]) &&
@@ -184,6 +215,35 @@ function loginValid($username, $password)
 	return $valid;
 }
 
+function getStudent()
+{
+	return "TODO";
+}
+
+function postStudent()
+{
+	return "TODO";
+}
+
+function getInstructor()
+{
+	return "TODO";
+}
+
+function getAdmin()
+{
+	return "TODO";
+}
+
+function getCourse()
+{
+	return "TODO";
+}
+
+function postCourse()
+{
+	return "TODO";
+}
 
 ////////////////////////
 //Team Based Functions//
@@ -197,20 +257,47 @@ function loginValid($username, $password)
 function book_store_switch()
 {
 	// Define the possible Book Store function URLs which the page can be accessed from
-	$possible_function_url = array();
+	$possible_function_url = array("getBook", "getSectionBook", "postBook");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
 		{
-			
+			case "getBook":
+				// if has params
+				return getBook();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getSectionBook":
+				// if has params
+				return getSectionBook();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "postBook":
+				// if has params
+				return postBook();
+				// else
+				// return "Missing " . $_GET["param-name"]
 		}
 	}
 }
 
 //Define Functions Here
 
+function getBook()
+{
+	return "TODO";
+}
 
+function getSectionBook()
+{
+	return "TODO";
+}
+
+function postBook()
+{
+	return "TODO";
+}
 
 ///////////////////
 //Human Resources//
@@ -243,20 +330,27 @@ function human_resources_switch()
 function facility_management_switch()
 {
 	// Define the possible Facilities Management function URLs which the page can be accessed from
-	$possible_function_url = array();
+	$possible_function_url = array("getRoom");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
 		{
-			
+			case "getFreeRoom":
+				// if has params
+				return getRoom();
+				// else
+				// return "Missing " . $_GET["param-name"]
 		}
 	}
 }
 
 //Define Functions Here
 
-
+function getFreeRoom()
+{
+	return "TODO";
+}
 
 //////////////////////
 //Student Enrollment//
@@ -266,18 +360,171 @@ function facility_management_switch()
 function student_enrollment_switch()
 {
 	// Define the possible Student Enrollment function URLs which the page can be accessed from
-	$possible_function_url = array();
+	$possible_function_url = array("getCourseList", "toggleCourse", "getSection", "getCourseSections",
+					"postSection", "deleteSection", "getSectionList", "getStudentSections",
+					"getInstructorSections", "getCurrentTerm", "getTerm", "postTerm", "enrollStudent",
+					"waitlistStudent", "withdrawStudent");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
 		{
+			case "getCourseList":
+				// if has params
+				return getCourseList();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "toggleCourse":
+				// if has params
+				return toggleCourse();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getSection":
+				// if has params
+				return getSection();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getCourseSections":
+				// if has params
+				return getCourseSections();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "postSection":
+				// if has params
+				return postSection();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "deleteSection":
+				// if has params
+				return deleteSection();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getSectionList":
+				// if has params
+				return getSectionList();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getStudentSections":
+				// if has params
+				return getStudentSections();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getInstructorSections":
+				// if has params
+				return getInstructorSections();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getCurrentTerm":
+				// if has params
+				return getCurrentTerm();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getTerm":
+				// if has params
+				return getTerm();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "postTerm":
+				// if has params
+				return postTerm();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "enrollStudent":
+				// if has params
+				return enrollStudent();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "waitlistStudent":
+				// if has params
+				return waitlistStudent();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "withdrawStudent":
+				// if has params
+				return withdrawStudent();
+				// else
+				// return "Missing " . $_GET["param-name"]
 			
 		}
 	}
 }
 
-//Define Functions Here
+//Student Enrollment Functions
+
+function getCourseList()
+{
+	return "TODO";
+}
+
+function toggleCourse()
+{
+	return "TODO";
+}
+
+function getSection()
+{
+	return "TODO";
+}
+
+function getCourseSections()
+{
+	return "TODO";
+}
+
+function postSection()
+{
+	return "TODO";
+}
+
+function deleteSection()
+{
+	return "TODO";
+}
+
+function getSectionList()
+{
+	return "TODO";
+}
+
+function getStudentSections()
+{
+	return "TODO";
+}
+
+function getInstructorSections()
+{
+	return "TODO";
+}
+
+function getCurrentTerm()
+{
+	return "TODO";
+}
+
+function getTerm()
+{
+	return "TODO";
+}
+
+function postTerm()
+{
+	return "TODO";
+}
+
+function enrollStudent()
+{
+	return "TODO";
+}
+
+function waitlistStudent()
+{
+	return "TODO";
+}
+
+function withdrawStudent()
+{
+	return "TODO";
+}
 
 
 
@@ -312,20 +559,27 @@ function coop_eval_switch_switch()
 function grading_switch()
 {
 	// Define the possible Grading function URLs which the page can be accessed from
-	$possible_function_url = array();
+	$possible_function_url = array("getStudentGrades");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
 		{
-			
+			case "getStudentGrades":
+				// if has params
+				return getStudentGrades();
+				// else
+				// return "Missing " . $_GET["param-name"]
 		}
 	}
 }
 
 //Define Functions Here
 
-
+function getStudentGrades()
+{
+	return "TODO";
+}
 
 /////////////////////
 //API Master Switch//
