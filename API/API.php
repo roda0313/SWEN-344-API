@@ -126,6 +126,7 @@ function createUser($username, $password, $fname, $lname, $email, $isProf, $isAd
 	try
 	{
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
 		
 		//first check if the username already exists
 		$query = $sqlite->prepare("SELECT * FROM User WHERE USERNAME=:username");
@@ -139,20 +140,16 @@ function createUser($username, $password, $fname, $lname, $email, $isProf, $isAd
 		
 		//for varaible reuse
 		$result->finalize();
-		unset($result);
 		
-		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL) VALUES (:username, :password, :fname, :lname, :email)");
+		$query1 = $sqlite->prepare("INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL) VALUES (:username, :password, :fname, :lname, :email)");
 		
-		$query->bindParam(':username', $username);		
-		$query->bindParam(':password', encrypt($password));	
-		$query->bindParam(':fname', $fname);	
-		$query->bindParam(':lname', $lname);
-		$query->bindParam(':email', $email);
+		$query1->bindParam(':username', $username);		
+		$query1->bindParam(':password', encrypt($password));	
+		$query1->bindParam(':fname', $fname);	
+		$query1->bindParam(':lname', $lname);
+		$query1->bindParam(':email', $email);
 		
-		$query->execute();
-				
-		$result->finalize();
+		$query1->execute();	
 		
 		// clean up any objects
 		$sqlite->close();
@@ -181,6 +178,7 @@ function loginValid($username, $password)
 	try 
 	{
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
 		$query = $sqlite->prepare("SELECT * FROM User WHERE USERNAME=:username");
@@ -192,7 +190,7 @@ function loginValid($username, $password)
 
 		if ($record = $result->fetchArray()) 
 		{
-			if ($record['USERNAME'] == $username && password_verify(encrypt($password), $record['PASSWORD']))
+			if (password_verify($password, $record['PASSWORD']))
 			{
 				$valid = TRUE;
 			}
