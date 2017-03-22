@@ -18,7 +18,7 @@ $sqliteDebug = true; //SET TO FALSE BEFORE OFFICIAL RELEASE
 function general_switch()
 {
 	// Define the possible general function URLs which the page can be accessed from
-	$possible_function_url = array("test", "loginValid", "getStudent", "postStudent", "getInstructor",
+	$possible_function_url = array("test", "loginValid", "createUser", "getStudent", "postStudent", "getInstructor",
 					"getAdmin", "getCourse", "postCourse");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
@@ -28,10 +28,15 @@ function general_switch()
 			case "test":
 				return APITest();
 			case "loginValid":
-				// if has params
-				return loginValid($_GET["username"], $_GET["password"]);
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_POST["username"]) && isset($_POST["password"])) 
+				{
+					return loginValid($_POST["username"], $_POST["password"]);
+				}
+				else 
+				{
+					logError("loginValid ~ Required parameters were not submit correctly.");
+					return FALSE;
+				}
 			case "getStudent":
 				// if has params
 				return getStudent();
@@ -62,6 +67,26 @@ function general_switch()
 				return postCourse();
 				// else
 				// return "Missing " . $_GET["param-name"]
+			case "createUser":
+				if (isset($_POST["username"]) &&
+					isset($_POST["password"]) &&
+					isset($_POST["fname"]) &&
+					isset($_POST["lname"]) &&
+					isset($_POST["email"])
+					)
+					{
+						return createUser($_POST["username"], 
+							$_POST["password"], 
+							$_POST["fname"],
+							$_POST["lname"],
+							$_POST["email"]
+							);
+					}
+					else 
+					{
+						logError("createUser ~ Required parameters were not submit correctly.");
+						return ("One or more parameters were not provided");
+					}
 		}
 	}
 }
@@ -84,12 +109,71 @@ function logError($message)
 		//what should happen if this fails???
 	}
 }
+
+//to decrypt this hash you NEED to use password_verify($password, $hash)
 function encrypt($string)
 {
 	return password_hash($string, PASSWORD_DEFAULT);
 }
 
+//to create prof or admin simply use this function with the correct flags
+//This also checks if username is valid and encrypts the plain text password
+//returns true if successful, else false
+function createUser($username, $password, $fname, $lname, $email, $isProf, $isAdmin)
+{
+	$success = FALSE;
+	
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		
+		//first check if the username already exists
+		$query = $sqlite->prepare("SELECT * FROM User WHERE USERNAME=:username");
+		$query->bindParam(':username', $username);		
+		$result = $query->execute();
+		
+		if ($record = $result->fetchArray()) 
+		{
+			return "Username Already Exists";
+		}
+		
+		//for varaible reuse
+		$result->finalize();
+		unset($result);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL) VALUES (:username, :password, :fname, :lname, :email)");
+		
+		$query->bindParam(':username', $username);		
+		$query->bindParam(':password', encrypt($password));	
+		$query->bindParam(':fname', $fname);	
+		$query->bindParam(':lname', $lname);
+		$query->bindParam(':email', $email);
+		
+		$query->execute();
+				
+		$result->finalize();
+		
+		// clean up any objects
+		$sqlite->close();
+		
+		//if it gets here without throwing an error, assume success = true;
+		$success = TRUE;
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+	
+	return $success;
+}
+
 //username and PLAIN TEXT password
+//must submit values via POST and not GET
 function loginValid($username, $password)
 {
 	$valid = FALSE;
@@ -99,14 +183,14 @@ function loginValid($username, $password)
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT * FROM STUDENTS WHERE USERNAME=:username");
+		$query = $sqlite->prepare("SELECT * FROM User WHERE USERNAME=:username");
 		$query->bindParam(':username', $username);		
-		$query->execute();
+		$result = $query->execute();
 		
 		
 		//$sqliteResult = $sqlite->query($queryString);
 
-		if ($record = $query->fetchArray()) 
+		if ($record = $result->fetchArray()) 
 		{
 			if ($record['USERNAME'] == $username && password_verify(encrypt($password), $record['PASSWORD']))
 			{
@@ -114,7 +198,7 @@ function loginValid($username, $password)
 			}
 		}
 	
-		$sqliteResult->finalize();
+		$result->finalize();
 		
 		// clean up any objects
 		$sqlite->close();
@@ -125,6 +209,7 @@ function loginValid($username, $password)
 		{
 			return $exception->getMessage();
 		}
+		logError($exception);
 	}
 	
 	return $valid;
