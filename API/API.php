@@ -27,7 +27,15 @@ function general_switch()
 			case "test":
 				return APITest();
 			case "loginValid":
-				return loginValid($_GET["username"], $_GET["password"]);
+				if (isset($_POST["username"]) && isset($_POST["password"])) 
+				{
+					return loginValid($_POST["username"], $_POST["password"]);
+				}
+				else 
+				{
+					logError("loginValid ~ Required parameters were not submit correctly.");
+					return FALSE;
+				}
 		}
 	}
 }
@@ -56,6 +64,7 @@ function encrypt($string)
 }
 
 //username and PLAIN TEXT password
+//must submit values via POST and not GET
 function loginValid($username, $password)
 {
 	$valid = FALSE;
@@ -65,7 +74,7 @@ function loginValid($username, $password)
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT * FROM STUDENTS WHERE USERNAME=:username");
+		$query = $sqlite->prepare("SELECT * FROM User WHERE USERNAME=:username");
 		$query->bindParam(':username', $username);		
 		$query->execute();
 		
