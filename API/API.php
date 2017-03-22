@@ -76,12 +76,12 @@ function loginValid($username, $password)
 		//prepare query to protect from sql injection
 		$query = $sqlite->prepare("SELECT * FROM User WHERE USERNAME=:username");
 		$query->bindParam(':username', $username);		
-		$query->execute();
+		$result = $query->execute();
 		
 		
 		//$sqliteResult = $sqlite->query($queryString);
 
-		if ($record = $query->fetchArray()) 
+		if ($record = $result->fetchArray()) 
 		{
 			if ($record['USERNAME'] == $username && password_verify(encrypt($password), $record['PASSWORD']))
 			{
@@ -89,7 +89,7 @@ function loginValid($username, $password)
 			}
 		}
 	
-		$sqliteResult->finalize();
+		$result->finalize();
 		
 		// clean up any objects
 		$sqlite->close();
