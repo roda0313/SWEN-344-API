@@ -554,19 +554,140 @@ function withdrawStudent()
 function coop_eval_switch_switch()
 {
 	// Define the possible Co-op Evaluation function URLs which the page can be accessed from
-	$possible_function_url = array();
+	$possible_function_url = array(
+		"getStudentEvaluation", "addStudentEvaluation", "updateStudentEvaluation", 
+		"getCompanies", "getEmployer", "updateEmployer", "addEmployer", "getEmployerEvaluation",
+		"updateEmployerEvaluation", "addEmployerEvaluation", "getCoopAdvisor", "getCoopInfo"
+	);
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
 		{
-			
+			case "getStudentEvaluation":
+				// if has params
+				return getStudentEvaluation();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "addStudentEvaluation":
+				// if has params
+				return addStudentEvaluation();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "updateStudentEvaluation":
+				// if has params
+				return updateStudentEvaluation();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getCompanies":
+				// if has params
+				return getCompanies();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getEmployer":
+				// if has params
+				return getEmployer();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "updateEmployer":
+				// if has params
+				return updateEmployer();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "addEmployer":
+				// if has params
+				return addEmployer();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getEmployerEvaluation":
+				// if has params
+				return getEmployerEvaluation();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "updateEmployerEvaluation":
+				// if has params
+				return updateEmployerEvaluation();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "addEmployerEvaluation":
+				// if has params
+				return addEmployerEvaluation();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getCoopAdvisor":
+				// if has params
+				return getCoopAdvisor();
+				// else
+				// return "Missing " . $_GET["param-name"]
+			case "getCoopInfo":
+				// if has params
+				return getCoopInfo();
+				// else
+				// return "Missing " . $_GET["param-name"]
 		}
 	}
 }
 
 //Define Functions Here
+function getStudentEvaluation()
+{
+	return "TODO";
+}
 
+function addStudentEvaluation()
+{
+	return "TODO";
+}
+
+function updateStudentEvaluation()
+{
+	return "TODO";
+}
+
+function getCompanies()
+{
+	return "TODO";
+}
+
+function getEmployer()
+{
+	return "TODO";
+}
+
+function updateEmployer()
+{
+	return "TODO";
+}
+
+function addEmployer()
+{
+	return "TODO";
+}
+
+function getEmployerEvaluation()
+{
+	return "TODO";
+}
+
+function updateEmployerEvaluation()
+{
+	return "TODO";
+}
+
+function addEmployerEvaluation()
+{
+	return "TODO";
+}
+
+function getCoopAdvisor()
+{
+	return "TODO";
+}
+
+function getCoopInfo()
+{
+	return "TODO";
+}
 
 
 ///////////
