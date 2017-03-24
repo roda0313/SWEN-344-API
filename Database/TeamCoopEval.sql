@@ -8,7 +8,7 @@ when creating a new company
 */
 CREATE TABLE CoopEmployee(
 	ID INTEGER PRIMARY KEY,
-	COMPANYID INT,
+	COMPANYID INT NOT NULL,
 	FIRSTNAME TEXT,
 	LASTNAME TEXT,
 	EMAIL TEXT,
@@ -30,7 +30,7 @@ END;
 /* ID field must be and INTEGER and not an INT to increment correctly */
 CREATE TABLE CoopCompany(
 	ID INTEGER PRIMARY KEY,
-	STUDENTID INT,
+	STUDENTID INT NOT NULL,
 	NAME TEXT NOT NULL,
 	ADDRESS TEXT,
 	DATECREATED DATE,
@@ -52,8 +52,8 @@ END;
 /* BLOB will need to be implemented in the API. Blobs simply store byte streams you put into them */
 CREATE TABLE StudentEval(
 	ID INTEGER PRIMARY KEY,
-	STUDENTID INT,
-	COMPANYID INT,
+	STUDENTID INT NOT NULL,
+	COMPANYID INT NOT NULL,
 	NAME TEXT,
 	EMAIL TEXT,
 	ENAME TEXT,
@@ -84,8 +84,8 @@ END;
 /* BLOB will need to be implemented in the API. Blobs simply store byte streams you put into them */
 CREATE TABLE EmployeeEval(
 	ID INTEGER PRIMARY KEY,
-	EMPLOYEEID INT,
-	COMPANYID INT,
+	EMPLOYEEID INT NOT NULL,
+	COMPANYID INT NOT NULL,
 	NAME TEXT,
 	EMAIL TEXT,
 	SNAME TEXT,
