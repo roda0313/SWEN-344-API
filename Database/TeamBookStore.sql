@@ -1,71 +1,74 @@
 /* Team Book Store tables */
-PRAGMA foreign_keys = ON;
 
-CREATE TABLE publisher (
-	id integer PRIMARY KEY AUTOINCREMENT,
-	name varchar,
-	info text
+CREATE TABLE Publisher (
+	ID INTEGER PRIMARY KEY,
+	NAME TEXT NOT NULL,
+	ADDRESS TEXT,
+	WEBSITE TEXT
 );
 
-CREATE TABLE book (
-	isbn integer PRIMARY KEY,
-	title varchar,
-	published_by integer,
-	price real,
-	available integer,
-	count integer,
-	FOREIGN KEY (published_by) REFERENCES publisher(id)
-);
-
-
-CREATE TABLE author (
-	id integer PRIMARY KEY AUTOINCREMENT,
-	first_name varchar,
-	last_name varchar
-);
-
-CREATE TABLE book_author (
-	book_isbn integer,
-	author_id integer,
-	PRIMARY KEY (book_isbn, author_id),
-	FOREIGN KEY (book_isbn) REFERENCES book(isbn),
-	FOREIGN KEY (author_id) REFERENCES author(id)
+CREATE TABLE Book (
+	ISBN INT PRIMARY KEY,
+	TITLE TEXT,
+	PUBLISHER_ID INTEGER NOT NULL,
+	PRICE REAL NOT NULL,
+	AVAILABLE BIT DEFAULT 1,
+	COUNT INTEGER NOT NULL,
+	FOREIGN KEY (PUBLISHER_ID) REFERENCES Publisher(ID)
 );
 
 
-CREATE TABLE book_preview (
-	id integer PRIMARY KEY AUTOINCREMENT,
-	preview text,
-	rating integer,
-	book_isbn integer,
-	user_id integer,
-	FOREIGN KEY (book_isbn) REFERENCES book(id)
+CREATE TABLE Author (
+	ID INTEGER PRIMARY KEY,
+	FIRST_NAME TEXT,
+	LAST_NAME TEXT
 );
 
-CREATE TABLE book_order (
-	id integer PRIMARY KEY AUTOINCREMENT,
-	order_datetime datetime default current_timestamp,
-	status integer,
-	subtotal real,
-	user_id integer,
-	FOREIGN KEY (status) REFERENCES order_status(id)
+CREATE TABLE BookAuthor (
+	BOOK_ISBN INTEGER NOT NULL,
+	AUTHOR_ID INTEGER NOT NULL,
+	PRIMARY KEY (BOOK_ISBN, AUTHOR_ID),
+	FOREIGN KEY (BOOK_ISBN) REFERENCES Book(ISBN),
+	FOREIGN KEY (AUTHOR_ID) REFERENCES Author(ID)
 );
 
-CREATE TABLE order_status (
-	id integer PRIMARY KEY AUTOINCREMENT,
-	status varchar
+
+CREATE TABLE BookReview (
+	ID INTEGER PRIMARY KEY,
+	REVIEW TEXT NOT NULL,
+	RATING INTEGER NOT NULL,
+	BOOK_ISBN INTEGER NOT NULL,
+	USER_ID INTEGER NOT NULL,
+	FOREIGN KEY (BOOK_ISBN) REFERENCES Book(ID),
+	FOREIGN KEY (USER_ID) REFERENCES User(ID)
 );
 
-CREATE TABLE order_item (
-	order_id integer,
-	book_isbn integer,
-	PRIMARY KEY (order_id, book_isbn),
-	FOREIGN KEY (book_isbn) REFERENCES book(isbn),
-	FOREIGN KEY (order_id) REFERENCES book_order(id)
+CREATE TABLE BookOrder (
+	ID INTEGER PRIMARY KEY,
+	ORDER_DATETIME DATETIME DEFAULT CURRENT_TIMESTAMP,
+	STATUS_ID INTEGER NOT NULL,
+	SUBTOTAL REAL NOT NULL,
+	USER_ID INTEGER NOT NULL,
+	FOREIGN KEY (USER_ID) REFERENCES User(ID),
+	FOREIGN KEY (STATUS_ID) REFERENCES OrderStatus(ID)
 );
 
-CREATE TABLE course_book (
-	course_id integer,
-	book_isbn integer,
-	FOREIGN KEY (book_isbn) REFERENCES book(id)
+CREATE TABLE OrderStatus (
+	ID INTEGER PRIMARY KEY,
+	STATUS TEXT NOT NULL
+);
+
+CREATE TABLE OrderItem (
+	ORDER_ID INTEGER NOT NULL,
+	BOOK_ISBN INTEGER NOT NULL,
+	PRIMARY KEY (ORDER_ID, BOOK_ISBN),
+	FOREIGN KEY (BOOK_ISBN) REFERENCES Book(ISBN),
+	FOREIGN KEY (ORDER_ID) REFERENCES BookOrder(ID)
+);
+
+CREATE TABLE SectionBook (
+	SECTION_ID INTEGER NOT NULL,
+	BOOK_ISBN INTEGER NOT NULL,
+	FOREIGN KEY (SECTION_ID) REFERENCES Section(ID),
+	FOREIGN KEY (BOOK_ISBN) REFERENCES Book(ISBN)
 );
