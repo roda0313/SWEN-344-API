@@ -552,7 +552,7 @@ function withdrawStudent()
 ////////////////////
 
 // Switchboard to Co-op Evaluation Functions
-function coop_eval_switch_switch()
+function coop_eval_switch()
 {
 	// Define the possible Co-op Evaluation function URLs which the page can be accessed from
 	$possible_function_url = array(
