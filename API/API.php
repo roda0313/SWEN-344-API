@@ -38,8 +38,10 @@ function general_switch()
 					return FALSE;
 				}
 			case "getStudent":
-				// if has params
+				if (isset($_GET["id"]) && $_GET["id"] != "null")
+				{
 				return getStudent();
+				}
 				// else
 				// return "Missing " . $_GET["param-name"]
 			case "postStudent":
