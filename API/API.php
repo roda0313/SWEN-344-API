@@ -119,7 +119,7 @@ function encrypt($string)
 //to create prof or admin simply use this function with the correct flags
 //This also checks if username is valid and encrypts the plain text password
 //returns true if successful, else false
-function createUser($username, $password, $fname, $lname, $email, $isProf, $isAdmin)
+function createUser($username, $password, $fname, $lname, $email, $role)
 {
 	$success = FALSE;
 	
@@ -141,13 +141,14 @@ function createUser($username, $password, $fname, $lname, $email, $isProf, $isAd
 		//for varaible reuse
 		$result->finalize();
 		
-		$query1 = $sqlite->prepare("INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL) VALUES (:username, :password, :fname, :lname, :email)");
+		$query1 = $sqlite->prepare("INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ROLE) VALUES (:username, :password, :fname, :lname, :email, :role)");
 		
 		$query1->bindParam(':username', $username);		
 		$query1->bindParam(':password', encrypt($password));	
 		$query1->bindParam(':fname', $fname);	
 		$query1->bindParam(':lname', $lname);
 		$query1->bindParam(':email', $email);
+		$query1->bindParam(':role', $role);
 		
 		$query1->execute();	
 		
