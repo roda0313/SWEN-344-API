@@ -18,7 +18,7 @@ $sqliteDebug = true; //SET TO FALSE BEFORE OFFICIAL RELEASE
 function general_switch()
 {
 	// Define the possible general function URLs which the page can be accessed from
-	$possible_function_url = array("test", "loginValid", "createUser", "getStudent", "postStudent", "getInstructor",
+	$possible_function_url = array("test", "login", "createUser", "getStudent", "postStudent", "getInstructor",
 					"getAdmin", "getCourse", "postCourse");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
@@ -27,10 +27,10 @@ function general_switch()
 		{
 			case "test":
 				return APITest();
-			case "loginValid":
+			case "login":
 				if (isset($_POST["username"]) && isset($_POST["password"])) 
 				{
-					return loginValid($_POST["username"], $_POST["password"]);
+					return login($_POST["username"], $_POST["password"]);
 				}
 				else 
 				{
@@ -168,6 +168,48 @@ function createUser($username, $password, $fname, $lname, $email, $role)
 	}
 	
 	return $success;
+}
+
+function login($username, $password)
+{
+	if (loginValid($username, $password))
+	{
+		try 
+		{
+			$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+			$sqlite->enableExceptions(true);
+			
+			//prepare query to protect from sql injection
+			$query = $sqlite->prepare("SELECT * FROM User WHERE USERNAME=:username");
+			$query->bindParam(':username', $username);		
+			$result = $query->execute();
+			
+			
+			//$sqliteResult = $sqlite->query($queryString);
+
+			if ($record = $result->fetchArray()) 
+			{
+				return $record;
+			}
+		
+			$result->finalize();
+			
+			// clean up any objects
+			$sqlite->close();
+		}
+		catch (Exception $exception)
+		{
+			if ($GLOBALS ["sqliteDebug"]) 
+			{
+				return $exception->getMessage();
+			}
+			logError($exception);
+		}
+	}
+	else 
+	{
+		return null;
+	}
 }
 
 //username and PLAIN TEXT password
@@ -566,10 +608,14 @@ function coop_eval_switch()
 		switch ($_GET["function"])
 		{
 			case "getStudentEvaluation":
-				// if has params
-				return getStudentEvaluation();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_GET["id"]))
+				{
+					return getStudentEvaluation($_GET["id"]);
+				}
+				else
+				{
+					return NULL;
+				}
 			case "addStudentEvaluation":
 				// if has params
 				return addStudentEvaluation();
