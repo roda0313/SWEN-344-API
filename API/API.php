@@ -370,28 +370,43 @@ function student_enrollment_switch()
 			// returns list of all courses in database
 			// params: none
 			case "getCourseList":
-				if (isset($_GET["id")) 
-				{
-					return "oops";
-				}
 				return getCourseList();
 				// else
 				// return "Missing " . $_GET["param-name"]
+			
+			// Calls function that toggles availability of course
+			// params: courseID
 			case "toggleCourse":
-				// if has params
-				return toggleCourse();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_GET["courseID"]) && $_GET["courseID"] != null)
+				{
+					return toggleCourse();
+				}
+				else
+				{
+					return "Missing courseID";
+				}
+			// returns: information about desired course
+			// params: sectionID
 			case "getSection":
-				// if has params
-				return getSection();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_GET["sectionID"]) && $_GET["sectionID"] != null)
+				{
+					return getSection();
+				}
+				else
+				{
+					return "Missing sectionID parameter";
+				}
+			// returns: list of all sections of a course
+			// params: courseID
 			case "getCourseSections":
-				// if has params
-				return getCourseSections();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_GET["courseID"]) && $_GET["courseID"] != null)
+				{
+					return getCourseSections();
+				}
+				else
+				{
+					return "Missing courseID param";
+				}
 			case "postSection":
 				// if has params
 				return postSection();
