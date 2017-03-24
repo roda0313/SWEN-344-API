@@ -186,8 +186,10 @@ function login($username, $password)
 			
 			
 			//$sqliteResult = $sqlite->query($queryString);
-
-			if ($record = $result->fetchArray()) 
+			
+			return $result;
+			
+			if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
 			{
 				return $record;
 			}
