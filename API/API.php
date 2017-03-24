@@ -367,8 +367,13 @@ function student_enrollment_switch()
 	{
 		switch ($_GET["function"])
 		{
+			// returns list of all courses in database
+			// params: none
 			case "getCourseList":
-				// if has params
+				if (isset($_GET["id")) 
+				{
+					return "oops";
+				}
 				return getCourseList();
 				// else
 				// return "Missing " . $_GET["param-name"]
