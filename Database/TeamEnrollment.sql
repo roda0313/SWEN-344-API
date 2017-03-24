@@ -27,7 +27,7 @@ CREATE TABLE Term(
 	END_DATE DATE
 );
 
-/* Join table. Student to Course relation */
+/* Join table. Course to Course relation */
 CREATE TABLE Prerequisite(
 	COURSE_ID INTEGER NOT NULL,
 	PREREQ_COURSE_ID INTEGER NOT NULL,
