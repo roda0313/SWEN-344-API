@@ -18,7 +18,7 @@ $sqliteDebug = true; //SET TO FALSE BEFORE OFFICIAL RELEASE
 function general_switch()
 {
 	// Define the possible general function URLs which the page can be accessed from
-	$possible_function_url = array("test", "login", "createUser", "getStudent", "postStudent", "getInstructor",
+	$possible_function_url = array("test", "login", "createUser", "getStudent", "postStudent", "getProfessor",
 					"getAdmin", "getCourse", "postCourse");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
@@ -47,9 +47,9 @@ function general_switch()
 				return postStudent();
 				// else
 				// return "Missing " . $_GET["param-name"]
-			case "getInstructor":
+			case "getProfessor":
 				// if has params
-				return getInstructor();
+				return getProfessor();
 				// else
 				// return "Missing " . $_GET["param-name"]
 			case "getAdmin":
@@ -268,7 +268,7 @@ function postStudent()
 	return "TODO";
 }
 
-function getInstructor()
+function getProfessor()
 {
 	return "TODO";
 }
@@ -403,9 +403,9 @@ function getFreeRoom()
 function student_enrollment_switch()
 {
 	// Define the possible Student Enrollment function URLs which the page can be accessed from
-	$possible_function_url = array("getCourseList", "toggleCourse", "getSection", "getCourseSections",
-					"postSection", "deleteSection", "getSectionList", "getStudentSections",
-					"getInstructorSections", "getCurrentTerm", "getTerm", "postTerm", "enrollStudent",
+	$possible_function_url = array("getCourseList", "toggleSection", "getSection", "getCourseSections",
+					"postSection", "deleteSection", "getStudentSections", "getProfessorSections",
+					"getCurrentTerm", "getTerm", "postTerm", "enrollStudent",
 					"waitlistStudent", "withdrawStudent");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
@@ -416,26 +416,23 @@ function student_enrollment_switch()
 			// params: none
 			case "getCourseList":
 				return getCourseList();
-				// else
-				// return "Missing " . $_GET["param-name"]
-			
 			// Calls function that toggles availability of course
 			// params: courseID
-			case "toggleCourse":
-				if (isset($_GET["courseID"]) && $_GET["courseID"] != null)
+			case "toggleSection":
+				if (isset($_POST["sectionID"]) && $_POST["sectionID"] != null)
 				{
-					return toggleCourse();
+					return toggleSection($_POST["sectionID"]);
 				}
 				else
 				{
-					return "Missing courseID";
+					return "Missing sectionID";
 				}
 			// returns: information about desired course
 			// params: sectionID
 			case "getSection":
 				if (isset($_GET["sectionID"]) && $_GET["sectionID"] != null)
 				{
-					return getSection();
+					return getSection($_GET["sectionID"]);
 				}
 				else
 				{
@@ -444,69 +441,140 @@ function student_enrollment_switch()
 			// returns: list of all sections of a course
 			// params: courseID
 			case "getCourseSections":
-				if (isset($_GET["courseID"]) && $_GET["courseID"] != null)
+				if (isset($_GET["courseCode"]) && $_GET["courseCode"] != null)
 				{
-					return getCourseSections();
+					return getCourseSections($_GET["courseCode"]);
 				}
 				else
 				{
 					return "Missing courseID param";
 				}
+			// returns: created section object
+			// params: maxStudents, professorID, courseID, termID, classroomID
 			case "postSection":
-				// if has params
-				return postSection();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if ((isset($_POST["maxStudents"]) && $_POST["maxStudents"] != null)
+					&& (isset($_POST["professorID"]) && $_POST["professorID"] != null)
+					&& (isset($_POST["courseID"]) && $_POST["courseID"] != null)
+					&& (isset($_POST["termID"]) && $_POST["termID"] != null)
+					&& (isset($_POST["classroomID"]) && $_POST["classroomID"] != null)
+				){
+					return postSection($_POST["maxStudents"],
+							$_POST["professorID"],
+							$_POST["courseID"],
+							$_POST["termID"],
+							$_POST["classroomID"]);
+				}
+				else
+				{
+					return "Missing a parameter";
+				}	
+			// returns: deleted section object
+			// params: maxStudents, professorID, courseID, termID, classroomID
 			case "deleteSection":
-				// if has params
-				return deleteSection();
-				// else
-				// return "Missing " . $_GET["param-name"]
-			case "getSectionList":
-				// if has params
-				return getSectionList();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if ((isset($_POST["maxStudents"]) && $_POST["maxStudents"] != null)
+					&& (isset($_POST["professorID"]) && $_POST["professorID"] != null)
+					&& (isset($_POST["courseID"]) && $_POST["courseID"] != null)
+					&& (isset($_POST["termID"]) && $_POST["termID"] != null)
+					&& (isset($_POST["classroomID"]) && $_POST["classroomID"] != null)
+				){
+					return deleteSection($_POST["maxStudents"],
+							$_POST["professorID"],
+							$_POST["courseID"],
+							$_POST["termID"],
+							$_POST["classroomID"]);
+				}
+				else
+				{
+					return "Missing a parameter";
+				}
+			// returns: object array of a student's enrolled and waitlisted sections
+			// params: studentID
 			case "getStudentSections":
-				// if has params
-				return getStudentSections();
-				// else
-				// return "Missing " . $_GET["param-name"]
-			case "getInstructorSections":
-				// if has params
-				return getInstructorSections();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_GET["studentID"]) && $_GET["studentID"] != null)
+				{
+					return getStudentSections($_GET["studentID"]);
+				}
+				else
+				{
+					return "Missing studentID param";
+				}
+			// returns: object array of a professor's sections
+			// params: professorID
+			case "getProfessorSections":
+				if (isset($_GET["professorID"]) && $_GET["professorID"] != null)
+				{
+					return getProfessorSections($_GET["professorID"]);
+				}
+				else
+				{
+					return "Missing professorID param";
+				}
+			// returns: current term
+			// params: none
 			case "getCurrentTerm":
-				// if has params
 				return getCurrentTerm();
-				// else
-				// return "Missing " . $_GET["param-name"]
+			// returns: term object
+			// params: termCode
 			case "getTerm":
-				// if has params
-				return getTerm();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_GET["termCode"]) && $_GET["termCode"] != null)
+				{
+					return getTerm($_GET["termCode"]);
+				}
+				else
+				{
+					return "Missing termCode param";
+				}
+			// returns: created term object
+			// params: termCode, startDate, endDate
 			case "postTerm":
-				// if has params
-				return postTerm();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if ((isset($_POST["termCode"]) && $_POST["termCode"] != null)
+					&& (isset($_POST["startDate"]) && $_POST["startDate"] != null)
+					&& (isset($_POST["endDate"]) && $_POST["endDate"] != null)
+				){
+					return postTerm($_POST["termCode"],
+							$_POST["startDate"],
+							$_POST["endDate"]);
+				}
+				else
+				{
+					return "Missing a parameter";
+				}
+			// returns: student object enrolled in section
+			// params: studentID, sectionID
 			case "enrollStudent":
-				// if has params
-				return enrollStudent();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if ((isset($_POST["studentID"]) && $_POST["studentID"] != null)
+					&& (isset($_POST["sectionID"]) && $_POST["sectionID"] != null)
+				){
+					return enrollStudent($_POST["studentID"], $_POST["sectionID"]);
+				}
+				else
+				{
+					return "Missing a parameter";
+				}
+			// returns: student object waitlisted for section
+			// params: studentID, sectionID
 			case "waitlistStudent":
-				// if has params
-				return waitlistStudent();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if ((isset($_POST["studentID"]) && $_POST["studentID"] != null)
+					&& (isset($_POST["sectionID"]) && $_POST["sectionID"] != null)
+				){
+					return waitlistStudent($_POST["studentID"], $_POST["sectionID"]);
+				}
+				else
+				{
+					return "Missing a parameter";
+				}
+			// returns: student object withdrawn from section
+			// params: studentID, sectionID
 			case "withdrawStudent":
-				// if has params
-				return withdrawStudent();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if ((isset($_POST["studentID"]) && $_POST["studentID"] != null)
+					&& (isset($_POST["sectionID"]) && $_POST["sectionID"] != null)
+				){
+					return withdrawStudent($_POST["studentID"], $_POST["sectionID"]);
+				}
+				else
+				{
+					return "Missing a parameter";
+				}
 			
 		}
 	}
@@ -516,45 +584,65 @@ function student_enrollment_switch()
 
 function getCourseList()
 {
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Course");		
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
-function toggleCourse()
+function toggleSection($sectionID)
 {
 	return "TODO";
 }
 
-function getSection()
+function getSection($sectionID)
 {
 	return "TODO";
 }
 
-function getCourseSections()
+function getCourseSections($courseCode)
 {
 	return "TODO";
 }
 
-function postSection()
+function postSection($maxStudents, $professorID, $courseID, $termID, $classroomID)
 {
 	return "TODO";
 }
 
-function deleteSection()
+function deleteSection($maxStudents, $professorID, $courseID, $termID, $classroomID)
 {
 	return "TODO";
 }
 
-function getSectionList()
+function getStudentSections($studentID)
 {
 	return "TODO";
 }
 
-function getStudentSections()
-{
-	return "TODO";
-}
-
-function getInstructorSections()
+function getProfessorSections($professorID)
 {
 	return "TODO";
 }
@@ -564,27 +652,27 @@ function getCurrentTerm()
 	return "TODO";
 }
 
-function getTerm()
+function getTerm($termCode)
 {
 	return "TODO";
 }
 
-function postTerm()
+function postTerm($termCode, $startDate, $endDate)
 {
 	return "TODO";
 }
 
-function enrollStudent()
+function enrollStudent($studentID, $sectionID)
 {
 	return "TODO";
 }
 
-function waitlistStudent()
+function waitlistStudent($studentID, $sectionID)
 {
 	return "TODO";
 }
 
-function withdrawStudent()
+function withdrawStudent($studentID, $sectionID)
 {
 	return "TODO";
 }
