@@ -403,7 +403,7 @@ function getFreeRoom()
 function student_enrollment_switch()
 {
 	// Define the possible Student Enrollment function URLs which the page can be accessed from
-	$possible_function_url = array("getCourseList", "toggleCourse", "getSection", "getCourseSections",
+	$possible_function_url = array("getCourseList", "toggleSection", "getSection", "getCourseSections",
 					"postSection", "deleteSection", "getStudentSections", "getProfessorSections",
 					"getCurrentTerm", "getTerm", "postTerm", "enrollStudent",
 					"waitlistStudent", "withdrawStudent");
@@ -418,14 +418,14 @@ function student_enrollment_switch()
 				return getCourseList();
 			// Calls function that toggles availability of course
 			// params: courseID
-			case "toggleCourse":
-				if (isset($_POST["courseCode"]) && $_POST["courseCode"] != null)
+			case "toggleSection":
+				if (isset($_POST["sectionID"]) && $_POST["sectionID"] != null)
 				{
-					return toggleCourse($_POST["courseCode"]);
+					return toggleSection($_POST["sectionID"]);
 				}
 				else
 				{
-					return "Missing courseID";
+					return "Missing sectionID";
 				}
 			// returns: information about desired course
 			// params: sectionID
@@ -612,7 +612,7 @@ function getCourseList()
 	}
 }
 
-function toggleCourse($courseCode)
+function toggleSection($sectionID)
 {
 	return "TODO";
 }
