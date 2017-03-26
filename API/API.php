@@ -37,36 +37,71 @@ function general_switch()
 					logError("loginValid ~ Required parameters were not submit correctly.");
 					return FALSE;
 				}
+			// returns: student object
+			// params: studentID
 			case "getStudent":
-				// if has params
+				if (isset($_GET["studentID"]) && $_GET["studentID"] != null)
+				{
 				return getStudent();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				}
+				else {
+					return "Missing studentID parameter";
+				}
+			// returns: Newly created student object
+			// params: yearLevel, gpa
 			case "postStudent":
-				// if has params
-				return postStudent();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if ((isset($_GET["yearLevel"]) && $_GET["yearLevel"] != null)
+					&& (isset($_GET["gpa"]) && $_GET["gpa"] != null))
+				{
+					return postStudent();
+				}
+				else {
+					return "Missing parameter(s)";
+				}
+			// returns: professor object
+			// params: professorID
 			case "getProfessor":
-				// if has params
-				return getProfessor();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_GET["professorID"]) && $_GET["professorID"] != null)
+				{
+					return getProfessor();
+				}
+				else {
+					return "Missing professorID";
+				}
+			// returns: admin object
+			// params: adminID
 			case "getAdmin":
-				// if has params
-				return getAdmin();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_GET["adminID"]) && $_GET["adminID"] != null)
+				{
+					return getAdmin();
+				}
+				else {
+					return "Missing adminID parameter";
+				}
+			// returns: course object
+			// params: courseID
 			case "getCourse":
-				// if has params
-				return getCourse();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_GET["courseID"]) && $_GET["courseID"] != null)
+				{
+					return getCourse();
+				}
+				else {
+					return "Missing courseID parameter";
+				}
+			// returns: newly created course object
+			// params: courseCode, courseName, credits, minGPA
 			case "postCourse":
-				// if has params
-				return postCourse();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if ((isset($_GET["courseCode"]) && $_GET["courseCode"] != null)
+					&& (isset($_GET["courseName"]) && $_GET["courseName"] != null)
+					&& (isset($_GET["credits"]) && $_GET["credits"] != null)
+					&& (isset($_GET["minGPA"]) && $_GET["minGPA"] != null))
+				{
+					return postCourse();
+				}
+				else {
+					return "Missing parameter(s)";
+				}
+				
 			case "createUser":
 				if (isset($_POST["username"]) &&
 					isset($_POST["password"]) &&
