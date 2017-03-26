@@ -42,7 +42,7 @@ function general_switch()
 			case "getStudent":
 				if (isset($_GET["studentID"]) && $_GET["studentID"] != null)
 				{
-				return getStudent();
+				return getStudent($_GET["studentId"]);
 				}
 				else {
 					return "Missing studentID parameter";
@@ -63,7 +63,7 @@ function general_switch()
 			case "getProfessor":
 				if (isset($_GET["professorID"]) && $_GET["professorID"] != null)
 				{
-					return getProfessor();
+					return getProfessor($_GET["professorID"]);
 				}
 				else {
 					return "Missing professorID";
@@ -73,7 +73,7 @@ function general_switch()
 			case "getAdmin":
 				if (isset($_GET["adminID"]) && $_GET["adminID"] != null)
 				{
-					return getAdmin();
+					return getAdmin($_GET["adminID"]);
 				}
 				else {
 					return "Missing adminID parameter";
@@ -83,7 +83,7 @@ function general_switch()
 			case "getCourse":
 				if (isset($_GET["courseID"]) && $_GET["courseID"] != null)
 				{
-					return getCourse();
+					return getCourse($_GET["courseID"]);
 				}
 				else {
 					return "Missing courseID parameter";
@@ -111,14 +111,16 @@ function general_switch()
 					isset($_POST["password"]) &&
 					isset($_POST["fname"]) &&
 					isset($_POST["lname"]) &&
-					isset($_POST["email"])
+					isset($_POST["email"]) &&
+					isset($_POST["role"])
 					)
 					{
 						return createUser($_POST["username"], 
 							$_POST["password"], 
 							$_POST["fname"],
 							$_POST["lname"],
-							$_POST["email"]
+							$_POST["email"],
+							$_POST["role"]
 							);
 					}
 					else 
@@ -297,32 +299,32 @@ function loginValid($username, $password)
 	return $valid;
 }
 
-function getStudent()
+function getStudent($studentID)
 {
 	return "TODO";
 }
 
-function postStudent()
+function postStudent($yearLevel, $gpa)
 {
 	return "TODO";
 }
 
-function getProfessor()
+function getProfessor($professorID)
 {
 	return "TODO";
 }
 
-function getAdmin()
+function getAdmin($adminID)
 {
 	return "TODO";
 }
 
-function getCourse()
+function getCourse($courseID)
 {
 	return "TODO";
 }
 
-function postCourse()
+function postCourse($courseCode, $courseName, $credits, $gpa)
 {
 	return "TODO";
 }
