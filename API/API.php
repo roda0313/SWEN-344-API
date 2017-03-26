@@ -42,7 +42,7 @@ function general_switch()
 			case "getStudent":
 				if (isset($_GET["studentID"]) && $_GET["studentID"] != null)
 				{
-				return getStudent();
+				return getStudent($_GET["studentId"]);
 				}
 				else {
 					return "Missing studentID parameter";
@@ -50,10 +50,10 @@ function general_switch()
 			// returns: Newly created student object
 			// params: yearLevel, gpa
 			case "postStudent":
-				if ((isset($_GET["yearLevel"]) && $_GET["yearLevel"] != null)
-					&& (isset($_GET["gpa"]) && $_GET["gpa"] != null))
+				if ((isset($_POST["yearLevel"]) && $_POST["yearLevel"] != null)
+					&& (isset($_POST["gpa"]) && $_POST["gpa"] != null))
 				{
-					return postStudent();
+					return postStudent($_POST["yearLevel"], $_POST["gpa"]);
 				}
 				else {
 					return "Missing parameter(s)";
@@ -63,7 +63,7 @@ function general_switch()
 			case "getProfessor":
 				if (isset($_GET["professorID"]) && $_GET["professorID"] != null)
 				{
-					return getProfessor();
+					return getProfessor($_GET["professorID"]);
 				}
 				else {
 					return "Missing professorID";
@@ -73,7 +73,7 @@ function general_switch()
 			case "getAdmin":
 				if (isset($_GET["adminID"]) && $_GET["adminID"] != null)
 				{
-					return getAdmin();
+					return getAdmin($_GET["adminID"]);
 				}
 				else {
 					return "Missing adminID parameter";
@@ -83,7 +83,7 @@ function general_switch()
 			case "getCourse":
 				if (isset($_GET["courseID"]) && $_GET["courseID"] != null)
 				{
-					return getCourse();
+					return getCourse($_GET["courseID"]);
 				}
 				else {
 					return "Missing courseID parameter";
@@ -91,12 +91,16 @@ function general_switch()
 			// returns: newly created course object
 			// params: courseCode, courseName, credits, minGPA
 			case "postCourse":
-				if ((isset($_GET["courseCode"]) && $_GET["courseCode"] != null)
-					&& (isset($_GET["courseName"]) && $_GET["courseName"] != null)
-					&& (isset($_GET["credits"]) && $_GET["credits"] != null)
-					&& (isset($_GET["minGPA"]) && $_GET["minGPA"] != null))
+				if ((isset($_POST["courseCode"]) && $_POST["courseCode"] != null)
+					&& (isset($_POST["courseName"]) && $_POST["courseName"] != null)
+					&& (isset($_POST["credits"]) && $_POST["credits"] != null)
+					&& (isset($_POST["minGPA"]) && $_POST["minGPA"] != null))
 				{
-					return postCourse();
+					return postCourse($_POST["courseCode"],
+						$_POST["courseName"],
+						$_POST["credits"],
+						$_POST["minGPA"]
+						);
 				}
 				else {
 					return "Missing parameter(s)";
@@ -107,14 +111,16 @@ function general_switch()
 					isset($_POST["password"]) &&
 					isset($_POST["fname"]) &&
 					isset($_POST["lname"]) &&
-					isset($_POST["email"])
+					isset($_POST["email"]) &&
+					isset($_POST["role"])
 					)
 					{
 						return createUser($_POST["username"], 
 							$_POST["password"], 
 							$_POST["fname"],
 							$_POST["lname"],
-							$_POST["email"]
+							$_POST["email"],
+							$_POST["role"]
 							);
 					}
 					else 
@@ -293,32 +299,32 @@ function loginValid($username, $password)
 	return $valid;
 }
 
-function getStudent()
+function getStudent($studentID)
 {
 	return "TODO";
 }
 
-function postStudent()
+function postStudent($yearLevel, $gpa)
 {
 	return "TODO";
 }
 
-function getProfessor()
+function getProfessor($professorID)
 {
 	return "TODO";
 }
 
-function getAdmin()
+function getAdmin($adminID)
 {
 	return "TODO";
 }
 
-function getCourse()
+function getCourse($courseID)
 {
 	return "TODO";
 }
 
-function postCourse()
+function postCourse($courseCode, $courseName, $credits, $gpa)
 {
 	return "TODO";
 }
