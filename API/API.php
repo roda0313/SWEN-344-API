@@ -50,10 +50,10 @@ function general_switch()
 			// returns: Newly created student object
 			// params: yearLevel, gpa
 			case "postStudent":
-				if ((isset($_GET["yearLevel"]) && $_GET["yearLevel"] != null)
-					&& (isset($_GET["gpa"]) && $_GET["gpa"] != null))
+				if ((isset($_POST["yearLevel"]) && $_POST["yearLevel"] != null)
+					&& (isset($_POST["gpa"]) && $_POST["gpa"] != null))
 				{
-					return postStudent();
+					return postStudent($_POST["yearLevel"], $_POST["gpa"]);
 				}
 				else {
 					return "Missing parameter(s)";
@@ -91,12 +91,16 @@ function general_switch()
 			// returns: newly created course object
 			// params: courseCode, courseName, credits, minGPA
 			case "postCourse":
-				if ((isset($_GET["courseCode"]) && $_GET["courseCode"] != null)
-					&& (isset($_GET["courseName"]) && $_GET["courseName"] != null)
-					&& (isset($_GET["credits"]) && $_GET["credits"] != null)
-					&& (isset($_GET["minGPA"]) && $_GET["minGPA"] != null))
+				if ((isset($_POST["courseCode"]) && $_POST["courseCode"] != null)
+					&& (isset($_POST["courseName"]) && $_POST["courseName"] != null)
+					&& (isset($_POST["credits"]) && $_POST["credits"] != null)
+					&& (isset($_POST["minGPA"]) && $_POST["minGPA"] != null))
 				{
-					return postCourse();
+					return postCourse($_POST["courseCode"],
+						$_POST["courseName"],
+						$_POST["credits"],
+						$_POST["minGPA"]
+						);
 				}
 				else {
 					return "Missing parameter(s)";
