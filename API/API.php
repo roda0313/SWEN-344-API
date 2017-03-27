@@ -508,9 +508,9 @@ function student_enrollment_switch()
 			// returns: list of all sections of a course
 			// params: courseID
 			case "getCourseSections":
-				if (isset($_GET["courseCode"]) && $_GET["courseCode"] != null)
+				if (isset($_GET["courseID"]) && $_GET["courseID"] != null)
 				{
-					return getCourseSections($_GET["courseCode"]);
+					return getCourseSections($_GET["courseID"]);
 				}
 				else
 				{
