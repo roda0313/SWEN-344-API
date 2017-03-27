@@ -48,12 +48,13 @@ function general_switch()
 					return "Missing studentID parameter";
 				}
 			// returns: Newly created student object
-			// params: yearLevel, gpa
+			// params: userID, yearLevel, gpa
 			case "postStudent":
 				if ((isset($_POST["yearLevel"]) && $_POST["yearLevel"] != null)
-					&& (isset($_POST["gpa"]) && $_POST["gpa"] != null))
+					&& (isset($_POST["gpa"]) && $_POST["gpa"] != null)
+					&& (isset($_POST["userID"]) && $_POST["userID"] != null))
 				{
-					return postStudent($_POST["yearLevel"], $_POST["gpa"]);
+					return postStudent($_POST["userID"], $_POST["yearLevel"], $_POST["gpa"]);
 				}
 				else {
 					return "Missing parameter(s)";
@@ -129,6 +130,10 @@ function general_switch()
 						return ("One or more parameters were not provided");
 					}
 		}
+	}
+	else
+	{
+		return "Function does not exist."
 	}
 }
 	
@@ -306,12 +311,12 @@ function getStudent($studentID)
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
 		
-		
-		$query = $sqlite->prepare("SELECT * FROM Student WHERE USER_ID=:studentID");
-		$query->bindParam(':studentID', $studentID);			
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Student WHERE USER_ID=:user_ID");
+		$query->bindParam(':user_ID', $studentID);
 		$result = $query->execute();
 		
-		
+		//$sqliteResult = $sqlite->query($queryString);
 		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
 		{
 			$result->finalize();
@@ -390,6 +395,10 @@ function book_store_switch()
 				// return "Missing " . $_GET["param-name"]
 		}
 	}
+	else
+	{
+		return "Function does not exist."
+	}
 }
 
 //Define Functions Here
@@ -426,6 +435,10 @@ function human_resources_switch()
 			
 		}
 	}
+	else
+	{
+		return "Function does not exist."
+	}
 }
 
 //Define Functions Here
@@ -452,6 +465,10 @@ function facility_management_switch()
 				// else
 				// return "Missing " . $_GET["param-name"]
 		}
+	}
+	else
+	{
+		return "Function does not exist."
 	}
 }
 
@@ -667,6 +684,10 @@ function student_enrollment_switch()
 			
 		}
 	}
+	else
+	{
+		return "Function does not exist."
+	}
 }
 
 //Student Enrollment Functions
@@ -780,7 +801,7 @@ function getSection($sectionID)
 	}
 }
 
-function getSectionEnrolledID($sectionID)
+function getSectionEnrolled($sectionID)
 {
 	try
 	{
@@ -850,7 +871,7 @@ function getCourseSections($courseID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT * FROM Section WHERE COURSE_ID=:courseID, AVAILABILITY=:avail");
+		$query = $sqlite->prepare("SELECT * FROM Section WHERE COURSE_ID=:courseID AND AVAILABILITY=:avail");
 		$query->bindParam(':courseID', $courseID);
 		$query->bindParam(':avail', 1);
 		$result = $query->execute();
@@ -1286,6 +1307,10 @@ function coop_eval_switch()
 				// return "Missing " . $_GET["param-name"]
 		}
 	}
+	else
+	{
+		return "Function does not exist."
+	}
 }
 
 //Define Functions Here
@@ -1385,6 +1410,10 @@ function grading_switch()
 				// else
 				// return "Missing " . $_GET["param-name"]
 		}
+	}
+	else
+	{
+		return "Function does not exist."
 	}
 }
 
