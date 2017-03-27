@@ -32,7 +32,8 @@ INSERT INTO EmployeeEval (EMPLOYEEID, COMPANYID) VALUES (1, 1);
 /*
 Enrollment Data
 */
-
+INSERT INTO Course (COURSE_CODE, NAME, CREDITS, MIN_GPA, AVAILABILITY) VALUES ("SWEN-344", "Web Engineering", 3, 3, 1);
+INSERT INTO Course (COURSE_CODE, NAME, CREDITS, MIN_GPA, AVAILABILITY) VALUES ("SWEN-444", "Human Requirements and Design", 3, 3, 0);
 /*
 Book store Data
 */
