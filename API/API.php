@@ -131,6 +131,10 @@ function general_switch()
 					}
 		}
 	}
+	else
+	{
+		return "Function does not exist."
+	}
 }
 	
 function APITest()
@@ -391,6 +395,10 @@ function book_store_switch()
 				// return "Missing " . $_GET["param-name"]
 		}
 	}
+	else
+	{
+		return "Function does not exist."
+	}
 }
 
 //Define Functions Here
@@ -427,6 +435,10 @@ function human_resources_switch()
 			
 		}
 	}
+	else
+	{
+		return "Function does not exist."
+	}
 }
 
 //Define Functions Here
@@ -453,6 +465,10 @@ function facility_management_switch()
 				// else
 				// return "Missing " . $_GET["param-name"]
 		}
+	}
+	else
+	{
+		return "Function does not exist."
 	}
 }
 
@@ -667,6 +683,10 @@ function student_enrollment_switch()
 				}
 			
 		}
+	}
+	else
+	{
+		return "Function does not exist."
 	}
 }
 
@@ -1287,6 +1307,10 @@ function coop_eval_switch()
 				// return "Missing " . $_GET["param-name"]
 		}
 	}
+	else
+	{
+		return "Function does not exist."
+	}
 }
 
 //Define Functions Here
@@ -1386,6 +1410,10 @@ function grading_switch()
 				// else
 				// return "Missing " . $_GET["param-name"]
 		}
+	}
+	else
+	{
+		return "Function does not exist."
 	}
 }
 
