@@ -301,7 +301,33 @@ function loginValid($username, $password)
 
 function getStudent($studentID)
 {
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		
+		$query = $sqlite->prepare("SELECT * FROM Student WHERE USER_ID=:studentID");
+		$query->bindParam(':studentID', $studentID);			
+		$result = $query->execute();
+		
+		
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 function postStudent($yearLevel, $gpa)
