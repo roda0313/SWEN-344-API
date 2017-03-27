@@ -1091,8 +1091,8 @@ function coop_eval_switch()
 {
 	// Define the possible Co-op Evaluation function URLs which the page can be accessed from
 	$possible_function_url = array(
-		"getStudentEvaluation", "addStudentEvaluation", "updateStudentEvaluation", "addCompany", "updateCompany"
-		"getCompanies", "getEmployer", "updateEmployer", "addEmployer", "getEmployerEvaluation",
+		"getStudentEvaluation", "addStudentEvaluation", "updateStudentEvaluation", "addCompany", "updateCompany",
+		"getCompanies", "getEmployers", "updateEmployer", "addEmployer", "getEmployerEvaluation",
 		"updateEmployerEvaluation", "addEmployerEvaluation", "getCoopAdvisor", "getCoopInfo"
 	);
 
@@ -1101,7 +1101,7 @@ function coop_eval_switch()
 		switch ($_GET["function"])
 		{
 			case "getStudentEvaluation":
-				if (isset($_GET['STUDENTID']) && isset($_GET['COMPANYID'))
+				if (isset($_GET['STUDENTID']) && isset($_GET['COMPANYID']))
 				{
 					return getStudentEvaluation($_GET["STUDENTID"], $_GET["COMPANYID"]);
 				}
@@ -1110,31 +1110,31 @@ function coop_eval_switch()
 					return NULL;
 				}
 			case "addStudentEvaluation":
-				if (isset($_POST['STUDENTID']) && isset($_POST['COMPANYID'))
+				if (isset($_POST['STUDENTID']) && isset($_POST['COMPANYID']))
 				{
-					return addStudentEvaluation(
+					return addStudentEvaluation(array(
 						'studentID'=>$_POST['StudentID'],
 						'companyID'=>$_POST['CompanyID'],
 						'name'=>$_POST['name'],
 						'email'=>$_POST['email'],
+						'ename'=>$_POST['ename'],
 						'eemail'=>$_POST['eemail'],
 						'position'=>$_POST['position'],
 						'q1'=>$_POST['q1'],
 						'q2'=>$_POST['q2'],
 						'q3'=>$_POST['q3'],
 						'q4'=>$_POST['q4'],
-						'q5'=>$_POST['q5']
-					);
+						'q5'=>$_POST['q5']			
+					));
 				}
 				else 
 				{
 					return NULL;
 				}
-				// return "Missing " . $_GET["param-name"]
 			case "updateStudentEvaluation":
-				if (isset($_POST['STUDENTID']) && isset($_POST['COMPANYID'))
+				if (isset($_POST['STUDENTID']) && isset($_POST['COMPANYID']))
 				{
-					return updateStudentEvaluation(
+					return updateStudentEvaluation(array(
 						'studentID'=>$_POST['StudentID'],
 						'companyID'=>$_POST['CompanyID'],
 						'name'=>$_POST['name'],
@@ -1146,7 +1146,7 @@ function coop_eval_switch()
 						'q3'=>$_POST['q3'],
 						'q4'=>$_POST['q4'],
 						'q5'=>$_POST['q5']
-					);
+					));
 				}
 				else 
 				{
@@ -1162,7 +1162,7 @@ function coop_eval_switch()
 					return NULL;
 				}
 			case "addCompany":
-				if ($_POST['StudentID'], $_POST['name'])
+				if ($_POST['StudentID'] && $_POST['name'])
 				{
 					return addCompany($_POST['StudentID'], $_POST['name'], $_POST['address']);
 				}
@@ -1172,39 +1172,108 @@ function coop_eval_switch()
 				}
 				
 			case "updateCompany":
-			
-				return updateCompany();
+				if (isset($_POST['StudentID']) && isset($_POST['name']))
+				{
+					return updateCompany($_POST['StudentID'], $_POST['name'], $_POST['address']);
+				}
+				else 
+				{
+					return NULL;
+				}
 				
-			case "getEmployer":
-				// if has params
-				return getEmployer();
-				// else
-				// return "Missing " . $_GET["param-name"]
+			case "getEmployers":
+				if (isset($_GET['CompanyID']))
+				{
+					return getEmployer($_GET['CompanyID']);
+				}
+				else
+				{
+					return NULL;
+				}
 			case "updateEmployer":
-				// if has params
-				return updateEmployer();
-				// else
+				if (isset($_POST['CompanyID']) && isset($_POST['ID']))
+				{
+					return updateEmployer(
+					$_POST['ID'], 
+					$_POST['CompanyID'],
+					$_POST['fname'],
+					$_POST['lname'],
+					$_POST['email']
+					);
+				}
+				else
+				{
+					return NULL;
+				}
 				// return "Missing " . $_GET["param-name"]
 			case "addEmployer":
-				// if has params
-				return addEmployer();
-				// else
+				if (isset($_POST['CompanyID']))
+				{
+					return addEmployer(
+						$_POST['CompanyID'], 
+						$_POST['fname'], 
+						$_POST['lname'], 
+						$_POST['email']
+					);
+				}
+				else
+				{
+					return NULL;
+				}
 				// return "Missing " . $_GET["param-name"]
 			case "getEmployerEvaluation":
-				// if has params
-				return getEmployerEvaluation();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_GET['EMPLOYEEID']) && isset($_GET['COMPANYID']))
+				{
+					return getEmployerEvaluation($_GET["EMPLOYEEID"], $_GET["COMPANYID"]);
+				}
+				else
+				{
+					return NULL;
+				}
 			case "updateEmployerEvaluation":
-				// if has params
-				return updateEmployerEvaluation();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_POST['EMPLOYEEID']) && isset($_POST['COMPANYID']))
+				{
+					return updateEmployerEvaluation(array(
+						'employeeID'=>$_POST['EmployeeID'],
+						'companyID'=>$_POST['CompanyID'],
+						'name'=>$_POST['name'],
+						'email'=>$_POST['email'],
+						'sname'=>$_POST['sname'],
+						'semail'=>$_POST['semail'],
+						'position'=>$_POST['position'],
+						'q1'=>$_POST['q1'],
+						'q2'=>$_POST['q2'],
+						'q3'=>$_POST['q3'],
+						'q4'=>$_POST['q4'],
+						'q5'=>$_POST['q5']			
+					));
+				}
+				else 
+				{
+					return NULL;
+				}
 			case "addEmployerEvaluation":
-				// if has params
-				return addEmployerEvaluation();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_POST['EMPLOYEEID']) && isset($_POST['COMPANYID']))
+				{
+					return updateEmployerEvaluation(array(
+						'employeeID'=>$_POST['EmployeeID'],
+						'companyID'=>$_POST['CompanyID'],
+						'name'=>$_POST['name'],
+						'email'=>$_POST['email'],
+						'sname'=>$_POST['sname'],
+						'semail'=>$_POST['semail'],
+						'position'=>$_POST['position'],
+						'q1'=>$_POST['q1'],
+						'q2'=>$_POST['q2'],
+						'q3'=>$_POST['q3'],
+						'q4'=>$_POST['q4'],
+						'q5'=>$_POST['q5']			
+					));
+				}
+				else 
+				{
+					return NULL;
+				}
 			case "getCoopAdvisor":
 				// if has params
 				return getCoopAdvisor();
@@ -1245,41 +1314,45 @@ function addCompany($studentID, $name, $address)
 		return "TODO";
 }
 
-function updateCompany()
+function updateCompany($studentID, $name, $address)
 {
 	return "TODO";
 }
 
-function getEmployer()
+function getEmployers($companyID)
 {
 	return "TODO";
 }
 
-function updateEmployer()
+//need ID here because its the only unique identifier
+//Maybe this will have to change later
+function updateEmployer($ID, $companyID, $fname, $lname, $email)
 {
 	return "TODO";
 }
 
-function addEmployer()
+function addEmployer($companyID, $fname, $lname, $email)
 {
 	return "TODO";
 }
 
-function getEmployerEvaluation()
+function getEmployerEvaluation($employeeID, $companyID)
 {
 	return "TODO";
 }
 
-function updateEmployerEvaluation()
+function updateEmployerEvaluation($array_params)
 {
 	return "TODO";
 }
 
-function addEmployerEvaluation()
+function addEmployerEvaluation($array_params)
 {
 	return "TODO";
 }
 
+/* 
+Currently these are not used
 function getCoopAdvisor()
 {
 	return "TODO";
@@ -1289,6 +1362,7 @@ function getCoopInfo()
 {
 	return "TODO";
 }
+*/
 
 
 ///////////
