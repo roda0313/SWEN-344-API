@@ -15,12 +15,17 @@ $sqliteDebug = true; //SET TO FALSE BEFORE OFFICIAL RELEASE
 //////////////////////
 
 // Switchboard to General Functions
-function general_switch()
+function general_switch($getFunctions)
 {
 	// Define the possible general function URLs which the page can be accessed from
 	$possible_function_url = array("test", "login", "createUser", "getStudent", "postStudent", "getProfessor",
 					"getAdmin", "getCourse", "postCourse");
-
+				
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -42,18 +47,20 @@ function general_switch()
 			case "getStudent":
 				if (isset($_GET["studentID"]) && $_GET["studentID"] != null)
 				{
-				return getStudent($_GET["studentId"]);
+					return getStudent($_GET["studentID"]);
 				}
-				else {
+				else 
+				{
 					return "Missing studentID parameter";
 				}
 			// returns: Newly created student object
-			// params: yearLevel, gpa
+			// params: userID, yearLevel, gpa
 			case "postStudent":
 				if ((isset($_POST["yearLevel"]) && $_POST["yearLevel"] != null)
-					&& (isset($_POST["gpa"]) && $_POST["gpa"] != null))
+					&& (isset($_POST["gpa"]) && $_POST["gpa"] != null)
+					&& (isset($_POST["userID"]) && $_POST["userID"] != null))
 				{
-					return postStudent($_POST["yearLevel"], $_POST["gpa"]);
+					return postStudent($_POST["userID"], $_POST["yearLevel"], $_POST["gpa"]);
 				}
 				else {
 					return "Missing parameter(s)";
@@ -129,6 +136,10 @@ function general_switch()
 						return ("One or more parameters were not provided");
 					}
 		}
+	}
+	else
+	{
+		return "Function does not exist.";
 	}
 }
 	
@@ -228,17 +239,14 @@ function login($username, $password)
 			
 			//$sqliteResult = $sqlite->query($queryString);
 			
-			return $result;
-			
 			if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
 			{
+				$result->finalize();
+				$sqlite->close();
+				
 				return $record;
 			}
 		
-			$result->finalize();
-			
-			// clean up any objects
-			$sqlite->close();
 		}
 		catch (Exception $exception)
 		{
@@ -301,7 +309,33 @@ function loginValid($username, $password)
 
 function getStudent($studentID)
 {
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Student WHERE USER_ID=:user_ID");
+		$query->bindParam(':user_ID', $studentID);
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			$sqlite->close();
+			
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 function postStudent($yearLevel, $gpa)
@@ -338,11 +372,16 @@ function postCourse($courseCode, $courseName, $credits, $gpa)
 //////////////
 
 // Switchboard to Book Store Functions
-function book_store_switch()
+function book_store_switch($getFunctions)
 {
 	// Define the possible Book Store function URLs which the page can be accessed from
 	$possible_function_url = array("getBook", "getSectionBook", "postBook");
 
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -363,6 +402,10 @@ function book_store_switch()
 				// else
 				// return "Missing " . $_GET["param-name"]
 		}
+	}
+	else
+	{
+		return "Function does not exist.";
 	}
 }
 
@@ -388,11 +431,16 @@ function postBook()
 ///////////////////
 
 // Switchboard to Human Resources Functions
-function human_resources_switch()
+function human_resources_switch($getFunctions)
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
 	$possible_function_url = array("test","updatePerson","upateProf","updateName", "updatePassword");
 
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -408,6 +456,10 @@ function human_resources_switch()
             case "updateName":
                 return updateFullName();
 		}
+	}
+	else
+	{
+		return "Function does not exist.";
 	}
 }
 
@@ -530,11 +582,16 @@ function updateProfInfo() {
 /////////////////////////
 
 // Switchboard to Facilities Management Functions
-function facility_management_switch()
+function facility_management_switch($getFunctions)
 {
 	// Define the possible Facilities Management function URLs which the page can be accessed from
 	$possible_function_url = array("getRoom");
 
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -545,6 +602,10 @@ function facility_management_switch()
 				// else
 				// return "Missing " . $_GET["param-name"]
 		}
+	}
+	else
+	{
+		return "Function does not exist.";
 	}
 }
 
@@ -560,14 +621,19 @@ function getFreeRoom()
 //////////////////////
 
 // Switchboard to Student Enrollment Functions
-function student_enrollment_switch()
+function student_enrollment_switch($getFunctions)
 {
 	// Define the possible Student Enrollment function URLs which the page can be accessed from
 	$possible_function_url = array("getCourseList", "toggleSection", "getSection", "getCourseSections",
 					"postSection", "deleteSection", "getStudentSections", "getProfessorSections",
-					"getCurrentTerm", "getTerm", "postTerm", "enrollStudent",
-					"waitlistStudent", "withdrawStudent");
-
+					"getTerms", "getTerm", "postTerm", "enrollStudent",
+					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist");
+				
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -601,9 +667,9 @@ function student_enrollment_switch()
 			// returns: list of all sections of a course
 			// params: courseID
 			case "getCourseSections":
-				if (isset($_GET["courseCode"]) && $_GET["courseCode"] != null)
+				if (isset($_GET["courseID"]) && $_GET["courseID"] != null)
 				{
-					return getCourseSections($_GET["courseCode"]);
+					return getCourseSections($_GET["courseID"]);
 				}
 				else
 				{
@@ -671,8 +737,8 @@ function student_enrollment_switch()
 				}
 			// returns: current term
 			// params: none
-			case "getCurrentTerm":
-				return getCurrentTerm();
+			case "getTerms":
+				return getTerms();
 			// returns: term object
 			// params: termCode
 			case "getTerm":
@@ -735,8 +801,34 @@ function student_enrollment_switch()
 				{
 					return "Missing a parameter";
 				}
+			// returns: enrolled student_ids of a section
+			// params: sectionID
+			case "getSectionEnrolled":
+				if (isset($_GET["sectionID"]) && $_GET["sectionID"] != null)
+				{
+					return getSectionEnrolled($_GET["sectionID"]);
+				}
+				else
+				{
+					return "Missing sectionID parameter";
+				}
+			// returns: waitlisted student_ids of a section
+			// params: sectionID
+			case "getSectionWaitlist":
+				if (isset($_GET["sectionID"]) && $_GET["sectionID"] != null)
+				{
+					return getSectionWaitlist($_GET["sectionID"]);
+				}
+				else
+				{
+					return "Missing sectionID parameter";
+				}
 			
 		}
+	}
+	else
+	{
+		return "Function does not exist.";
 	}
 }
 
@@ -774,52 +866,366 @@ function getCourseList()
 
 function toggleSection($sectionID)
 {
-	return "TODO";
+	try 
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Section WHERE ID=:sectionID");
+		$query->bindParam(':sectionID', $sectionID);		
+		$result = $query->execute();
+		
+		
+
+		if ($record = $result->fetchArray()) 
+		{
+			if ($record['AVAILABILITY'] == "0")
+			{
+				//prepare query to protect from sql injection
+				$query_inner = $sqlite->prepare("UPDATE Section SET AVAILABILITY = '1' WHERE ID = sectionID;");
+				$query_inner->bindParam(':sectionID', $sectionID);		
+				$result_inner = $query->execute();
+			}
+			else
+			{
+				//prepare query to protect from sql injection
+				$query_inner = $sqlite->prepare("UPDATE Section SET AVAILABILITY = '0' WHERE ID = sectionID;");
+				$query_inner->bindParam(':sectionID', $sectionID);		
+				$result_inner = $query->execute();
+			}
+		}
+	
+		$result->finalize();
+		
+		// clean up any objects
+		$sqlite->close();
+		return $record;
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 function getSection($sectionID)
 {
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Section WHERE ID=:sectionID");
+		$query->bindParam(':sectionID', $sectionID);
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
-function getCourseSections($courseCode)
+function getSectionEnrolled($sectionID)
 {
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT STUDENT_ID FROM Student_Section WHERE SECTION_ID=:sectionID");
+		$query->bindParam(':sectionID', $sectionID);
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function getSectionWaitlist($sectionID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT STUDENT_ID FROM Waitlist WHERE SECTION_ID=:sectionID");
+		$query->bindParam(':sectionID', $sectionID);
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function getCourseSections($courseID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Section WHERE COURSE_ID=:courseID AND AVAILABILITY=:avail");
+		$query->bindParam(':courseID', $courseID);
+		$query->bindParam(':avail', 1);
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 function postSection($maxStudents, $professorID, $courseID, $termID, $classroomID)
 {
-	return "TODO";
-}
-
-function deleteSection($maxStudents, $professorID, $courseID, $termID, $classroomID)
-{
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//first check if the username already exists
+		$query = $sqlite->prepare("INSERT INTO Section (MAX_STUDENTS, PROFESSOR_ID, COURSE_ID, TERM_ID, CLASSROOM_ID) VALUES (:max_students, :professor_id, :course_id, :term_id, :classroomID)");
+		$query->bindParam(':max_students', $maxStudents);
+		$query->bindParam(':professor_id', $professorID);
+		$query->bindParam(':course_id', $courseID);
+		$query->bindParam(':term_id', $termID);
+		$query->bindParam(':classroom_id', $classroomID);
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 function getStudentSections($studentID)
 {
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT STUDENT_ID FROM Student_Section WHERE STUDENT_ID=:studentID");
+		$query->bindParam(':studentID', $studentID);
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 function getProfessorSections($professorID)
 {
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Section WHERE PROFESSOR_ID=:professorID");
+		$query->bindParam(':professorID', $professorID);
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
-function getCurrentTerm()
+function getTerms()
 {
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Term");
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 function getTerm($termCode)
 {
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Term WHERE CODE=:code");
+		$query->bindParam(':code', $termCode);
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 function postTerm($termCode, $startDate, $endDate)
 {
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//first check if the username already exists
+		$query = $sqlite->prepare("INSERT INTO Term (CODE, START_DATE, END_DATE) VALUES (:code, :start_date, :end_date)");
+		$query->bindParam(':code', $termCode);
+		$query->bindParam(':start_date', $startDate);
+		$query->bindParam(':end_date', $endDate);
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 function enrollStudent($studentID, $sectionID)
@@ -844,73 +1250,198 @@ function withdrawStudent($studentID, $sectionID)
 ////////////////////
 
 // Switchboard to Co-op Evaluation Functions
-function coop_eval_switch()
+function coop_eval_switch($getFunctions)
 {
 	// Define the possible Co-op Evaluation function URLs which the page can be accessed from
 	$possible_function_url = array(
-		"getStudentEvaluation", "addStudentEvaluation", "updateStudentEvaluation", 
-		"getCompanies", "getEmployer", "updateEmployer", "addEmployer", "getEmployerEvaluation",
+		"getStudentEvaluation", "addStudentEvaluation", "updateStudentEvaluation", "addCompany", "updateCompany",
+		"getCompanies", "getEmployers", "updateEmployer", "addEmployer", "getEmployerEvaluation",
 		"updateEmployerEvaluation", "addEmployerEvaluation", "getCoopAdvisor", "getCoopInfo"
 	);
 
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
 		{
 			case "getStudentEvaluation":
-				if (isset($_GET["id"]))
+				if (isset($_GET['STUDENTID']) && isset($_GET['COMPANYID']))
 				{
-					return getStudentEvaluation($_GET["id"]);
+					return getStudentEvaluation($_GET["STUDENTID"], $_GET["COMPANYID"]);
 				}
 				else
 				{
 					return NULL;
 				}
 			case "addStudentEvaluation":
-				// if has params
-				return addStudentEvaluation();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_POST['STUDENTID']) && isset($_POST['COMPANYID']))
+				{
+					return addStudentEvaluation(array(
+						'studentID'=>$_POST['StudentID'],
+						'companyID'=>$_POST['CompanyID'],
+						'name'=>$_POST['name'],
+						'email'=>$_POST['email'],
+						'ename'=>$_POST['ename'],
+						'eemail'=>$_POST['eemail'],
+						'position'=>$_POST['position'],
+						'q1'=>$_POST['q1'],
+						'q2'=>$_POST['q2'],
+						'q3'=>$_POST['q3'],
+						'q4'=>$_POST['q4'],
+						'q5'=>$_POST['q5']			
+					));
+				}
+				else 
+				{
+					return NULL;
+				}
 			case "updateStudentEvaluation":
-				// if has params
-				return updateStudentEvaluation();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_POST['STUDENTID']) && isset($_POST['COMPANYID']))
+				{
+					return updateStudentEvaluation(array(
+						'studentID'=>$_POST['StudentID'],
+						'companyID'=>$_POST['CompanyID'],
+						'name'=>$_POST['name'],
+						'email'=>$_POST['email'],
+						'eemail'=>$_POST['eemail'],
+						'position'=>$_POST['position'],
+						'q1'=>$_POST['q1'],
+						'q2'=>$_POST['q2'],
+						'q3'=>$_POST['q3'],
+						'q4'=>$_POST['q4'],
+						'q5'=>$_POST['q5']
+					));
+				}
+				else 
+				{
+					return NULL;
+				}
 			case "getCompanies":
-				// if has params
-				return getCompanies();
-				// else
-				// return "Missing " . $_GET["param-name"]
-			case "getEmployer":
-				// if has params
-				return getEmployer();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if ($_GET['StudentID'])
+				{
+					return getCompanies();
+				}
+				else
+				{
+					return NULL;
+				}
+			case "addCompany":
+				if ($_POST['StudentID'] && $_POST['name'])
+				{
+					return addCompany($_POST['StudentID'], $_POST['name'], $_POST['address']);
+				}
+				else 
+				{
+					return NULL;
+				}
+				
+			case "updateCompany":
+				if (isset($_POST['StudentID']) && isset($_POST['name']))
+				{
+					return updateCompany($_POST['StudentID'], $_POST['name'], $_POST['address']);
+				}
+				else 
+				{
+					return NULL;
+				}
+				
+			case "getEmployers":
+				if (isset($_GET['CompanyID']))
+				{
+					return getEmployer($_GET['CompanyID']);
+				}
+				else
+				{
+					return NULL;
+				}
 			case "updateEmployer":
-				// if has params
-				return updateEmployer();
-				// else
+				if (isset($_POST['CompanyID']) && isset($_POST['ID']))
+				{
+					return updateEmployer(
+					$_POST['ID'], 
+					$_POST['CompanyID'],
+					$_POST['fname'],
+					$_POST['lname'],
+					$_POST['email']
+					);
+				}
+				else
+				{
+					return NULL;
+				}
 				// return "Missing " . $_GET["param-name"]
 			case "addEmployer":
-				// if has params
-				return addEmployer();
-				// else
+				if (isset($_POST['CompanyID']))
+				{
+					return addEmployer(
+						$_POST['CompanyID'], 
+						$_POST['fname'], 
+						$_POST['lname'], 
+						$_POST['email']
+					);
+				}
+				else
+				{
+					return NULL;
+				}
 				// return "Missing " . $_GET["param-name"]
 			case "getEmployerEvaluation":
-				// if has params
-				return getEmployerEvaluation();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_GET['EMPLOYEEID']) && isset($_GET['COMPANYID']))
+				{
+					return getEmployerEvaluation($_GET["EMPLOYEEID"], $_GET["COMPANYID"]);
+				}
+				else
+				{
+					return NULL;
+				}
 			case "updateEmployerEvaluation":
-				// if has params
-				return updateEmployerEvaluation();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_POST['EMPLOYEEID']) && isset($_POST['COMPANYID']))
+				{
+					return updateEmployerEvaluation(array(
+						'employeeID'=>$_POST['EmployeeID'],
+						'companyID'=>$_POST['CompanyID'],
+						'name'=>$_POST['name'],
+						'email'=>$_POST['email'],
+						'sname'=>$_POST['sname'],
+						'semail'=>$_POST['semail'],
+						'position'=>$_POST['position'],
+						'q1'=>$_POST['q1'],
+						'q2'=>$_POST['q2'],
+						'q3'=>$_POST['q3'],
+						'q4'=>$_POST['q4'],
+						'q5'=>$_POST['q5']			
+					));
+				}
+				else 
+				{
+					return NULL;
+				}
 			case "addEmployerEvaluation":
-				// if has params
-				return addEmployerEvaluation();
-				// else
-				// return "Missing " . $_GET["param-name"]
+				if (isset($_POST['EMPLOYEEID']) && isset($_POST['COMPANYID']))
+				{
+					return updateEmployerEvaluation(array(
+						'employeeID'=>$_POST['EmployeeID'],
+						'companyID'=>$_POST['CompanyID'],
+						'name'=>$_POST['name'],
+						'email'=>$_POST['email'],
+						'sname'=>$_POST['sname'],
+						'semail'=>$_POST['semail'],
+						'position'=>$_POST['position'],
+						'q1'=>$_POST['q1'],
+						'q2'=>$_POST['q2'],
+						'q3'=>$_POST['q3'],
+						'q4'=>$_POST['q4'],
+						'q5'=>$_POST['q5']			
+					));
+				}
+				else 
+				{
+					return NULL;
+				}
 			case "getCoopAdvisor":
 				// if has params
 				return getCoopAdvisor();
@@ -923,59 +1454,77 @@ function coop_eval_switch()
 				// return "Missing " . $_GET["param-name"]
 		}
 	}
+	else
+	{
+		return "Function does not exist.";
+	}
 }
 
 //Define Functions Here
-function getStudentEvaluation()
+function getStudentEvaluation($studentID, $comapanyID)
 {
 	return "TODO";
 }
 
-function addStudentEvaluation()
+function addStudentEvaluation($array_params)
 {
 	return "TODO";
 }
 
-function updateStudentEvaluation()
+function updateStudentEvaluation($array_params)
 {
 	return "TODO";
 }
 
-function getCompanies()
+function getCompanies($studentID)
 {
 	return "TODO";
 }
 
-function getEmployer()
+function addCompany($studentID, $name, $address)
+{
+		return "TODO";
+}
+
+function updateCompany($studentID, $name, $address)
 {
 	return "TODO";
 }
 
-function updateEmployer()
+function getEmployers($companyID)
 {
 	return "TODO";
 }
 
-function addEmployer()
+//need ID here because its the only unique identifier
+//Maybe this will have to change later
+function updateEmployer($ID, $companyID, $fname, $lname, $email)
 {
 	return "TODO";
 }
 
-function getEmployerEvaluation()
+function addEmployer($companyID, $fname, $lname, $email)
 {
 	return "TODO";
 }
 
-function updateEmployerEvaluation()
+function getEmployerEvaluation($employeeID, $companyID)
 {
 	return "TODO";
 }
 
-function addEmployerEvaluation()
+function updateEmployerEvaluation($array_params)
 {
 	return "TODO";
 }
 
+function addEmployerEvaluation($array_params)
+{
+	return "TODO";
+}
+
+/* 
+Currently these are not used
 function getCoopAdvisor()
 {
 	return "TODO";
@@ -985,6 +1534,7 @@ function getCoopInfo()
 {
 	return "TODO";
 }
+*/
 
 
 ///////////
@@ -992,11 +1542,16 @@ function getCoopInfo()
 ///////////
 
 // Switchboard to Grading Functions
-function grading_switch()
+function grading_switch($getFunctions)
 {
 	// Define the possible Grading function URLs which the page can be accessed from
 	$possible_function_url = array("getStudentGrades");
 
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -1007,6 +1562,10 @@ function grading_switch()
 				// else
 				// return "Missing " . $_GET["param-name"]
 		}
+	}
+	else
+	{
+		return "Function does not exist.";
 	}
 }
 
@@ -1029,27 +1588,43 @@ if (isset($_GET["team"]) && in_array($_GET["team"], $possible_url))
 	switch ($_GET["team"])
 	{
 		case "general":
-			$result = general_switch();
+			$result = general_switch(false);
 			break;
 		case "book_store":
-			$result = book_store_switch();
+			$result = book_store_switch(false);
 			break;
 		case "human_resources":
-			$result = human_resources_switch();
+			$result = human_resources_switch(false);
 			break;
 		case "facility_management":
-			$result = facility_management_switch();
+			$result = facility_management_switch(false);
 			break;
 		case "student_enrollment":
-			$result = student_enrollment_switch();
+			$result = student_enrollment_switch(false);
 			break;
 		case "coop_eval":
-			$result = coop_eval_switch();
+			$result = coop_eval_switch(false);
 			break;
 		case "grading":
-			$result = grading_switch();
+			$result = grading_switch(false);
 			break;
 	}
+}
+
+
+//A utility function to get a list of all availiable API functions
+if (isset($_GET["getAllFunctions"]))
+{
+	$result = array(
+		"Teams" => $possible_url,
+		"General" => general_switch(true),
+		"book_store" => book_store_switch(true),
+		"human_resources" => human_resources_switch(true),
+		"facility_management" => facility_management_switch(true),
+		"student_enrollment" => student_enrollment_switch(true),
+		"coop_eval" => coop_eval_switch(true),
+		"grading" => grading_switch(true)
+	);
 }
 
 //return JSON array
