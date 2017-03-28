@@ -431,7 +431,7 @@ function postBook()
 ///////////////////
 
 // Switchboard to Human Resources Functions
-function human_resources_switch()
+function human_resources_switch($getFunctions)
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
 	$possible_function_url = array("test","updatePerson","upateProf","updateName", "updatePassword");
