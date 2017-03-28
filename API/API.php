@@ -391,18 +391,72 @@ function postBook()
 function human_resources_switch()
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
-	$possible_function_url = array();
+	$possible_function_url = array("getSalary","updateFname","updateLname","terminate");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
 		{
+			// Calls function that gets an employee's salary
+			// params: ID
+			case 'getSalary':
+				if (isset($_POST["ID"]) != null)
+				{
+					return getSalary($_POST["ID"]);
+				}
+				else
+				{
+					return "Missing ID";
+				}
 			
+			// Calls function that updates a user's first name
+			// params: 
+			case 'updateFname':
+				// if has params
+				return update_lname();
+				// else
+				// return "Missing " . $_GET["param-name"]
+
+			// Calls function that updates a user's last name
+			// params: 
+			case 'updateLname':
+				// if has params
+				return updateLname();
+				// else
+				// return "Missing " . $_GET["param-name"]
+
+			// Calls function that removes an employee from the DB
+			// params: 
+			case 'terminate':
+				// if has params
+				return terminate();
+				// else
+				// return "Missing " . $_GET["param-name"]
 		}
 	}
 }
 
 //Define Functions Here
+
+function getSalary($ID)
+{
+	return "TODO";
+}
+
+function updateLname()
+{
+	return "TODO";
+}
+
+function updateFname()
+{
+	return "TODO";
+}
+
+function terminate()
+{
+	return "TODO";
+}
 
 
 
