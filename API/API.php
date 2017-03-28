@@ -42,7 +42,7 @@ function general_switch()
 			case "getStudent":
 				if (isset($_GET["studentID"]) && $_GET["studentID"] != null)
 				{
-					return ($_GET["studentID"]);
+					return getStudent($_GET["studentID"]);
 				}
 				else 
 				{
