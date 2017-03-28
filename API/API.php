@@ -458,7 +458,7 @@ function human_resources_switch($getFunctions)
 	}
 	else
 	{
-		return "function does not exitst.";
+		return "Function does not exist.";
 	}
 }
 
