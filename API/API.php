@@ -42,9 +42,10 @@ function general_switch()
 			case "getStudent":
 				if (isset($_GET["studentID"]) && $_GET["studentID"] != null)
 				{
-				return getStudent($_GET["studentId"]);
+					return ($_GET["studentID"]);
 				}
-				else {
+				else 
+				{
 					return "Missing studentID parameter";
 				}
 			// returns: Newly created student object
@@ -233,17 +234,14 @@ function login($username, $password)
 			
 			//$sqliteResult = $sqlite->query($queryString);
 			
-			return $result;
-			
 			if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
 			{
+				$result->finalize();
+				$sqlite->close();
+				
 				return $record;
 			}
 		
-			$result->finalize();
-			
-			// clean up any objects
-			$sqlite->close();
 		}
 		catch (Exception $exception)
 		{
@@ -320,8 +318,8 @@ function getStudent($studentID)
 		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
 		{
 			$result->finalize();
-			// clean up any objects
 			$sqlite->close();
+			
 			return $record;
 		}
 	}
