@@ -58,10 +58,10 @@ Facility Management Data
 /*
 HR Data
 */
-INSERT INTO Univer (USER_ID, MANAGER_ID, TITLE, ADDRESS, SALARY) VALUES (1, 2, "TheBoss", "Address", "1000000");
-INSERT INTO UniversityEmployee (USER_ID, MANAGER_ID, TITLE, ADDRESS, SALARY) VALUES (1, 3, "TheBoss", "Address", "1000000");
-INSERT INTO UniversityEmployee (USER_ID, MANAGER_ID, TITLE, ADDRESS, SALARY) VALUES (2, 1, "Jokester", "Address2", "1000000");
-INSERT INTO UniversityEmployee (USER_ID, MANAGER_ID, TITLE, ADDRESS, SALARY) VALUES (3, , "TheEmperor", "Address3", "1000000");
+INSERT INTO UniversityEmployee (USER_ID, MANAGER_ID, TITLE, ADDRESS, SALARY) VALUES (1, 1, "Admin", "Address", "2000000");
+INSERT INTO UniversityEmployee (USER_ID, MANAGER_ID, TITLE, ADDRESS, SALARY) VALUES (2, 4, "Manager", "Address1", "75000");
+INSERT INTO UniversityEmployee (USER_ID, MANAGER_ID, TITLE, ADDRESS, SALARY) VALUES (3, 2, "Jokester", "Address2", "50000");
+INSERT INTO UniversityEmployee (USER_ID, MANAGER_ID, TITLE, ADDRESS, SALARY) VALUES (4, 1, "CEO", "Address3", "1000000");
 
 /*
 Grading Data

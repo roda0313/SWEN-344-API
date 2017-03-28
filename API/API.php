@@ -431,16 +431,11 @@ function postBook()
 ///////////////////
 
 // Switchboard to Human Resources Functions
-function human_resources_switch($getFunctions)
+function human_resources_switch()
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
 	$possible_function_url = array("test","updatePerson","upateProf","updateName", "updatePassword");
 
-	if ($getFunctions)
-	{
-		return $possible_function_url;
-	}
-	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -456,10 +451,6 @@ function human_resources_switch($getFunctions)
             case "updateName":
                 return updateFullName();
 		}
-	}
-	else
-	{
-		return "Function does not exist.";
 	}
 }
 
