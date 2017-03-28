@@ -434,26 +434,69 @@ function postBook()
 function human_resources_switch($getFunctions)
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
-	$possible_function_url = array("test","updatePerson","upateProf","updateName", "updatePassword");
+	$possible_function_url = array("test","updatePerson","updateProf","updateName", "updatePassword");
 
 	if ($getFunctions)
 	{
 		return $possible_function_url;
 	}
+
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
 		{
+			
             case "test":
                 return testThis();
-            case "updatePerson":
-                return updatePersonalInfo();
+
             case "updateProf":
-                return updateProfInfo();
+    			if ((isset($_POST["id"]) && $_POST["id"] != null)
+					&& (isset($_POST["salary"]) && $_POST["salary"] != null)
+					&& (isset($_POST["title"]) && $_POST["title"] != null)
+				){
+                	return updateProfInfo($_POST["id"], $_POST["salary"], $_POST["title"]);
+                }
+                else
+                {
+                	return "Missing a parameter";
+                }
+                
+            case "updatePerson":
+            	if ((isset($_POST["username"]) && $_POST["username"] != null)
+					&& (isset($_POST["fname"]) && $_POST["fname"] != null)
+					&& (isset($_POST["lname"]) && $_POST["lname"] != null)
+					&& (isset($_POST["email"]) && $_POST["email"] != null)
+					&& (isset($_POST["address"]) && $_POST["address"] != null)
+				){
+            		return updatePersonalInfo($_POST["username"], $_POST["fname"], $_POST["lname"], $_POST["email"], $_POST["address"]);
+				}
+				else
+                {
+                	return "Missing a parameter";
+                }
+               
             case "updatePassword":
-                return updatePassword();
+            	if ((isset($_POST["username"]) && $_POST["username"] != null)
+					&& (isset($_POST["password"]) && $_POST["password"] != null)
+				){
+            		return updatePassword($_POST["username"], $_POST["password"]);
+				}
+				else
+                {
+                	return "Missing a parameter";
+                }
+                
             case "updateName":
-                return updateFullName();
+            	if ((isset($_POST["username"]) && $_POST["username"] != null)
+					&& (isset($_POST["fname"]) && $_POST["fname"] != null)
+					&& (isset($_POST["lname"]) && $_POST["lname"] != null)
+				){
+                	return updateFullName($_POST["username"], $_POST["fname"], $_POST["lname"]);
+                }
+                else
+                {
+                	return "Missing a parameter";
+                }
 		}
 	}
 	else
@@ -467,13 +510,7 @@ function testThis() {
 }
 
 //Define Functions Here
-function updateFullName() {
-    $username = $_GET["username"];
-    $fname = $_GET["fname"];
-    $lname = $_GET["lname"];
-    if(!(isset($username) && isset($fname) && isset($lname))) {
-        return false;
-    }
+function updateFullName($username, $fname, $lname) {
     $success = false;
     try {
         $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
@@ -496,12 +533,7 @@ function updateFullName() {
 	return $success;
 }
 
-function updatePassword() {
-    $username = $_GET["username"];
-    $password = $_GET["password"];
-    if(!(isset($username) && isset($password))) {
-        return false;
-    }
+function updatePassword($username, $password) {
     $success = false;
     try {
         $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
@@ -521,55 +553,46 @@ function updatePassword() {
     return $success;
 }
 
-function updatePersonalInfo() {
-    $username = $_GET["username"];
-    $fname = $_GET["fname"];
-    $lname = $_GET["lname"];
-    $email = $_GET["email"];
-    $address = $_GET["address"];
-    $phone = $_GET["phone"];
-    if(!(isset($username) && isset($fname) && isset($lname) && isset($email) && isset($address) && isset($phone))) {
-        return false;
-    }
+function updatePersonalInfo($username, $fname, $lname, $email, $address) {
     $success = false;
     try {
         $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
         $sqlite->enableException(true);
-        $query = $sqlite->prepare("UPDATE Users SET FIRSTNAME=:fname LASTNAME=:lname EMAIL=:email WHERE USERNAME=:username");
+        $query = $sqlite->prepare("UPDATE Users SET FIRSTNAME=:fname LASTNAME=:lname EMAIL=:email ADDRESS=:address WHERE USERNAME=:username");
+        $query->bindParam(':username', $username);
         $query->bindParam(':fname', $fname);
         $query->bindParam(':lname', $lname);
         $query->bindParam(':email', $email);
-        $query->bindParam(':username', $username);
+        $query->bindParam(':address', $address);
         $query->execute();
         $sqlite->close();
         $success = true;
     }catch (Exception $exception) {
-        if($GLOBAL ["sqliteDebug"]) {
+        if($GLOBAL ["sqliteDebug"]) 
+        {
             return $exception->getMessage();
         }
     }
     return $success;
 }
 
-function updateProfInfo() {
-    $id = $_GET["id"];
-    $salary = $_GET["salary"];
-    $position = $_GET["position"];
-    if(!(isset($id) && isset($salary) && isset($position))) {
-        return false;
-    }
+function updateProfInfo($id, $salary, $title) {
     $success = false;
     try {
         $sqlite = new SQLITE($GLOBALS ["databaseFile"]);
         $sqlite->enableException(true);
-        $query = $sqlite->prepare("UPDATE StudentEmployee SET SALARY=:salary WHERE ID=:id");
+        $query = $sqlite->prepare("UPDATE StudentEmployee SET SALARY=:salary TITLE=:title WHERE ID=:id");
         $query->bindParam(':id', $id);
         $query->bindParam(':salary', $salary);
+        $query->bindParam(':title', $title)
         $query->execute();
         $sqlite->close();
         $success = true;
     } catch(Exception $exception) {
-        return $exception->getMessage();
+        if ($GLOBALS ["sqliteDebug"])
+        {
+            return $exception->getMessage();
+        }
     }
     return $success;
 }
