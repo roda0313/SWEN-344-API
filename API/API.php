@@ -391,71 +391,136 @@ function postBook()
 function human_resources_switch()
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
-	$possible_function_url = array("getSalary","updateFname","updateLname","terminate");
+	$possible_function_url = array("test","updatePerson","upateProf","updateName", "updatePassword");
 
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
 		{
-			// Calls function that gets an employee's salary
-			// params: ID
-			case 'getSalary':
-				if (isset($_POST["ID"]) != null)
-				{
-					return getSalary($_POST["ID"]);
-				}
-				else
-				{
-					return "Missing ID";
-				}
-			
-			// Calls function that updates a user's first name
-			// params: 
-			case 'updateFname':
-				// if has params
-				return update_lname();
-				// else
-				// return "Missing " . $_GET["param-name"]
-
-			// Calls function that updates a user's last name
-			// params: 
-			case 'updateLname':
-				// if has params
-				return updateLname();
-				// else
-				// return "Missing " . $_GET["param-name"]
-
-			// Calls function that removes an employee from the DB
-			// params: 
-			case 'terminate':
-				// if has params
-				return terminate();
-				// else
-				// return "Missing " . $_GET["param-name"]
+            case "test":
+                return testThis();
+            case "updatePerson":
+                return updatePersonalInfo();
+            case "updateProf":
+                return updateProfInfo();
+            case "updatePassword":
+                return updatePassword();
+            case "updateName":
+                return updateFullName();
 		}
 	}
 }
 
+function testThis() {
+    return "MOO";
+}
+
 //Define Functions Here
-
-function getSalary($ID)
-{
-	return "TODO";
+function updateFullName() {
+    $username = $_GET["username"];
+    $fname = $_GET["fname"];
+    $lname = $_GET["lname"];
+    if(!(isset($username) && isset($fname) && isset($lname))) {
+        return false;
+    }
+    $success = false;
+    try {
+        $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+        $sqlite->enableExceptions(true);
+        $query = $sqlite->prepare("UPDATE Users SET FIRSTNAME=:fname, LASTNAME=:lname WHERE USERNAME=:username");
+        $query->bindParam(':username',$username);
+        $query->bindParam(':fname',$fname);
+        $query->bindParam(':lname',$lname);
+        $query->execute();
+        $sqlite->close();
+        $success = true;
+    }catch (Exception $exception) {
+        if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+	
+	return $success;
 }
 
-function updateLname()
-{
-	return "TODO";
+function updatePassword() {
+    $username = $_GET["username"];
+    $password = $_GET["password"];
+    if(!(isset($username) && isset($password))) {
+        return false;
+    }
+    $success = false;
+    try {
+        $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+        $sqlite->enableExeception(true);
+        $query = $sqlite->prepare("UPDATE Users SET PASSWORD=:password WHERE USERNAME=:username");
+        $query->bindParam(':username',$username);
+        $query->bindParam(':password',encrypt($password));
+        $query->execute();
+        $sqlite->close();
+        $success = true;
+    }catch (Exception $exception) {
+        if ($GLOBALS ["sqliteDebug"])
+        {
+            return $exception->getMessage();
+        }
+    }
+    return $success;
 }
 
-function updateFname()
-{
-	return "TODO";
+function updatePersonalInfo() {
+    $username = $_GET["username"];
+    $fname = $_GET["fname"];
+    $lname = $_GET["lname"];
+    $email = $_GET["email"];
+    $address = $_GET["address"];
+    $phone = $_GET["phone"];
+    if(!(isset($username) && isset($fname) && isset($lname) && isset($email) && isset($address) && isset($phone))) {
+        return false;
+    }
+    $success = false;
+    try {
+        $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+        $sqlite->enableException(true);
+        $query = $sqlite->prepare("UPDATE Users SET FIRSTNAME=:fname LASTNAME=:lname EMAIL=:email WHERE USERNAME=:username");
+        $query->bindParam(':fname', $fname);
+        $query->bindParam(':lname', $lname);
+        $query->bindParam(':email', $email);
+        $query->bindParam(':username', $username);
+        $query->execute();
+        $sqlite->close();
+        $success = true;
+    }catch (Exception $exception) {
+        if($GLOBAL ["sqliteDebug"]) {
+            return $exception->getMessage();
+        }
+    }
+    return $success;
 }
 
-function terminate()
-{
-	return "TODO";
+function updateProfInfo() {
+    $id = $_GET["id"];
+    $salary = $_GET["salary"];
+    $position = $_GET["position"];
+    if(!(isset($id) && isset($salary) && isset($position))) {
+        return false;
+    }
+    $success = false;
+    try {
+        $sqlite = new SQLITE($GLOBALS ["databaseFile"]);
+        $sqlite->enableException(true);
+        $query = $sqlite->prepare("UPDATE StudentEmployee SET SALARY=:salary WHERE ID=:id");
+        $query->bindParam(':id', $id);
+        $query->bindParam(':salary', $salary);
+        $query->execute();
+        $sqlite->close();
+        $success = true;
+    } catch(Exception $exception) {
+        return $exception->getMessage();
+    }
+    return $success;
 }
 
 
