@@ -15,12 +15,17 @@ $sqliteDebug = true; //SET TO FALSE BEFORE OFFICIAL RELEASE
 //////////////////////
 
 // Switchboard to General Functions
-function general_switch()
+function general_switch($getFunctions)
 {
 	// Define the possible general function URLs which the page can be accessed from
 	$possible_function_url = array("test", "login", "createUser", "getStudent", "postStudent", "getProfessor",
 					"getAdmin", "getCourse", "postCourse");
-
+				
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -367,11 +372,16 @@ function postCourse($courseCode, $courseName, $credits, $gpa)
 //////////////
 
 // Switchboard to Book Store Functions
-function book_store_switch()
+function book_store_switch($getFunctions)
 {
 	// Define the possible Book Store function URLs which the page can be accessed from
 	$possible_function_url = array("getBook", "getSectionBook", "postBook");
 
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -421,11 +431,16 @@ function postBook()
 ///////////////////
 
 // Switchboard to Human Resources Functions
-function human_resources_switch()
+function human_resources_switch($getFunctions)
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
 	$possible_function_url = array();
 
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -448,11 +463,16 @@ function human_resources_switch()
 /////////////////////////
 
 // Switchboard to Facilities Management Functions
-function facility_management_switch()
+function facility_management_switch($getFunctions)
 {
 	// Define the possible Facilities Management function URLs which the page can be accessed from
 	$possible_function_url = array("getRoom");
 
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -482,14 +502,19 @@ function getFreeRoom()
 //////////////////////
 
 // Switchboard to Student Enrollment Functions
-function student_enrollment_switch()
+function student_enrollment_switch($getFunctions)
 {
 	// Define the possible Student Enrollment function URLs which the page can be accessed from
 	$possible_function_url = array("getCourseList", "toggleSection", "getSection", "getCourseSections",
 					"postSection", "deleteSection", "getStudentSections", "getProfessorSections",
 					"getTerms", "getTerm", "postTerm", "enrollStudent",
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist");
-
+				
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -1106,7 +1131,7 @@ function withdrawStudent($studentID, $sectionID)
 ////////////////////
 
 // Switchboard to Co-op Evaluation Functions
-function coop_eval_switch()
+function coop_eval_switch($getFunctions)
 {
 	// Define the possible Co-op Evaluation function URLs which the page can be accessed from
 	$possible_function_url = array(
@@ -1115,6 +1140,11 @@ function coop_eval_switch()
 		"updateEmployerEvaluation", "addEmployerEvaluation", "getCoopAdvisor", "getCoopInfo"
 	);
 
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -1393,11 +1423,16 @@ function getCoopInfo()
 ///////////
 
 // Switchboard to Grading Functions
-function grading_switch()
+function grading_switch($getFunctions)
 {
 	// Define the possible Grading function URLs which the page can be accessed from
 	$possible_function_url = array("getStudentGrades");
 
+	if ($getFunctions)
+	{
+		return $possible_function_url;
+	}
+	
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
@@ -1434,27 +1469,43 @@ if (isset($_GET["team"]) && in_array($_GET["team"], $possible_url))
 	switch ($_GET["team"])
 	{
 		case "general":
-			$result = general_switch();
+			$result = general_switch(false);
 			break;
 		case "book_store":
-			$result = book_store_switch();
+			$result = book_store_switch(false);
 			break;
 		case "human_resources":
-			$result = human_resources_switch();
+			$result = human_resources_switch(false);
 			break;
 		case "facility_management":
-			$result = facility_management_switch();
+			$result = facility_management_switch(false);
 			break;
 		case "student_enrollment":
-			$result = student_enrollment_switch();
+			$result = student_enrollment_switch(false);
 			break;
 		case "coop_eval":
-			$result = coop_eval_switch();
+			$result = coop_eval_switch(false);
 			break;
 		case "grading":
-			$result = grading_switch();
+			$result = grading_switch(false);
 			break;
 	}
+}
+
+
+//A utility function to get a list of all availiable API functions
+if (isset($_GET["getAllFunctions"]))
+{
+	$result = array(
+		"Teams" => $possible_url,
+		"General" => general_switch(true),
+		"book_store" => book_store_switch(true),
+		"human_resources" => human_resources_switch(true),
+		"facility_management" => facility_management_switch(true),
+		"student_enrollment" => student_enrollment_switch(true),
+		"coop_eval" => coop_eval_switch(true),
+		"grading" => grading_switch(true)
+	);
 }
 
 //return JSON array
