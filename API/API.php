@@ -133,7 +133,7 @@ function general_switch()
 	}
 	else
 	{
-		return "Function does not exist."
+		return "Function does not exist.";
 	}
 }
 	
@@ -397,7 +397,7 @@ function book_store_switch()
 	}
 	else
 	{
-		return "Function does not exist."
+		return "Function does not exist.";
 	}
 }
 
@@ -437,7 +437,7 @@ function human_resources_switch()
 	}
 	else
 	{
-		return "Function does not exist."
+		return "Function does not exist.";
 	}
 }
 
@@ -468,7 +468,7 @@ function facility_management_switch()
 	}
 	else
 	{
-		return "Function does not exist."
+		return "Function does not exist.";
 	}
 }
 
@@ -686,7 +686,7 @@ function student_enrollment_switch()
 	}
 	else
 	{
-		return "Function does not exist."
+		return "Function does not exist.";
 	}
 }
 
@@ -1309,7 +1309,7 @@ function coop_eval_switch()
 	}
 	else
 	{
-		return "Function does not exist."
+		return "Function does not exist.";
 	}
 }
 
@@ -1413,7 +1413,7 @@ function grading_switch()
 	}
 	else
 	{
-		return "Function does not exist."
+		return "Function does not exist.";
 	}
 }
 
