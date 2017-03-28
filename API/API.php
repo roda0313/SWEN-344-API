@@ -434,18 +434,69 @@ function postBook()
 function human_resources_switch($getFunctions)
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
-	$possible_function_url = array();
+	$possible_function_url = array("test","updatePerson","updateProf","updateName", "updatePassword");
 
 	if ($getFunctions)
 	{
 		return $possible_function_url;
 	}
-	
+
 	if (isset($_GET["function"]) && in_array($_GET["function"], $possible_function_url))
 	{
 		switch ($_GET["function"])
 		{
 			
+            case "test":
+                return testThis();
+
+            case "updateProf":
+    			if ((isset($_POST["id"]) && $_POST["id"] != null)
+					&& (isset($_POST["salary"]) && $_POST["salary"] != null)
+					&& (isset($_POST["title"]) && $_POST["title"] != null)
+				){
+                	return updateProfInfo($_POST["id"], $_POST["salary"], $_POST["title"]);
+                }
+                else
+                {
+                	return "Missing a parameter";
+                }
+                
+            case "updatePerson":
+            	if ((isset($_POST["username"]) && $_POST["username"] != null)
+					&& (isset($_POST["fname"]) && $_POST["fname"] != null)
+					&& (isset($_POST["lname"]) && $_POST["lname"] != null)
+					&& (isset($_POST["email"]) && $_POST["email"] != null)
+					&& (isset($_POST["address"]) && $_POST["address"] != null)
+				){
+            		return updatePersonalInfo($_POST["username"], $_POST["fname"], $_POST["lname"], $_POST["email"], $_POST["address"]);
+				}
+				else
+                {
+                	return "Missing a parameter";
+                }
+               
+            case "updatePassword":
+            	if ((isset($_POST["username"]) && $_POST["username"] != null)
+					&& (isset($_POST["password"]) && $_POST["password"] != null)
+				){
+            		return updatePassword($_POST["username"], $_POST["password"]);
+				}
+				else
+                {
+                	return "Missing a parameter";
+                }
+                
+            case "updateName":
+            	if ((isset($_POST["username"]) && $_POST["username"] != null)
+					&& (isset($_POST["fname"]) && $_POST["fname"] != null)
+					&& (isset($_POST["lname"]) && $_POST["lname"] != null)
+				){
+                	return updateFullName($_POST["username"], $_POST["fname"], $_POST["lname"]);
+                }
+                else
+                {
+                	return "Missing a parameter";
+                }
 		}
 	}
 	else
@@ -454,7 +505,126 @@ function human_resources_switch($getFunctions)
 	}
 }
 
+function testThis() {
+    return "MOO";
+}
+
 //Define Functions Here
+function updateFullName($username, $fname, $lname) {
+    $success = false;
+	
+    try 
+	{
+        $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+        $sqlite->enableExceptions(true);
+		
+        $query = $sqlite->prepare("UPDATE Users SET FIRSTNAME=:fname, LASTNAME=:lname WHERE USERNAME=:username");
+        $query->bindParam(':username',$username);
+        $query->bindParam(':fname',$fname);
+        $query->bindParam(':lname',$lname);
+		
+        $query->execute();
+        $sqlite->close();
+		
+        $success = true;
+    }
+	catch (Exception $exception) 
+	{
+        if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+	
+	return $success;
+}
+
+function updatePassword($username, $password) {
+    $success = false;
+	
+    try 
+	{
+        $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+        $sqlite->enableExeception(true);
+		
+        $query = $sqlite->prepare("UPDATE Users SET PASSWORD=:password WHERE USERNAME=:username");
+        $query->bindParam(':username',$username);
+        $query->bindParam(':password',encrypt($password));
+		
+        $query->execute();
+        $sqlite->close();
+		
+        $success = true;
+    }
+	catch (Exception $exception) 
+	{
+        if ($GLOBALS ["sqliteDebug"])
+        {
+            return $exception->getMessage();
+        }
+    }
+    return $success;
+}
+
+function updatePersonalInfo($username, $fname, $lname, $email, $address) {
+    $success = false;
+	
+    try 
+	{
+        $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+        $sqlite->enableException(true);
+		
+        $query = $sqlite->prepare("UPDATE Users SET FIRSTNAME=:fname LASTNAME=:lname EMAIL=:email ADDRESS=:address WHERE USERNAME=:username");
+        $query->bindParam(':username', $username);
+        $query->bindParam(':fname', $fname);
+        $query->bindParam(':lname', $lname);
+        $query->bindParam(':email', $email);
+        $query->bindParam(':address', $address);
+		
+        $query->execute();
+        $sqlite->close();
+		
+        $success = true;
+    }
+	catch (Exception $exception) 
+	{
+        if($GLOBAL ["sqliteDebug"]) 
+        {
+            return $exception->getMessage();
+        }
+    }
+	
+    return $success;
+}
+
+function updateProfInfo($id, $salary, $title) {
+    $success = false;
+	
+    try 
+	{
+        $sqlite = new SQLITE($GLOBALS ["databaseFile"]);
+        $sqlite->enableException(true);
+		
+        $query = $sqlite->prepare("UPDATE StudentEmployee SET SALARY=:salary TITLE=:title WHERE ID=:id");
+        $query->bindParam(':id', $id);
+        $query->bindParam(':salary', $salary);
+        $query->bindParam(':title', $title);
+        $query->execute();
+		
+        $sqlite->close();
+        $success = true;
+    } 
+	catch(Exception $exception) 
+	{
+        if ($GLOBALS ["sqliteDebug"])
+        {
+            return $exception->getMessage();
+        }
+    }
+	
+    return $success;
+}
 
 
 

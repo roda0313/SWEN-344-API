@@ -1,7 +1,7 @@
 /* University Human Resources */
 
-/* StudentEmployee Table */
-CREATE TABLE StudentEmployee(
+/* UniversityEmployee Table */
+CREATE TABLE UniversityEmployee(
 	ID INTEGER PRIMARY KEY,
 	USER_ID INTEGER NOT NULL,
 	MANAGER_ID INTEGER NOT NULL,
