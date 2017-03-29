@@ -985,15 +985,13 @@ function getCourseList()
 		
 		$record = null;
 		//$sqliteResult = $sqlite->query($queryString);
-		while ($row = $result->fetchArray(SQLITE3_ASSOC)) 
+		if($record = $result->fetchAll(SQLITE3_ASSOC)) 
 		{
-			
-			$record .= $row;
-		}
-		$result->finalize();
+			$result->finalize();
 			// clean up any objects
-		$sqlite->close();
-		return $record;
+			$sqlite->close();
+			return $record;
+		}
 	}
 	catch (Exception $exception)
 	{
@@ -1160,7 +1158,7 @@ function getCourseSections($courseID)
 		$result = $query->execute();
 		
 		//$sqliteResult = $sqlite->query($queryString);
-		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		if ($record = $result->fetchAll(SQLITE3_ASSOC)) 
 		{
 			$result->finalize();
 			// clean up any objects
