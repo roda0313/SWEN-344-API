@@ -983,14 +983,17 @@ function getCourseList()
 		$query = $sqlite->prepare("SELECT * FROM Course");		
 		$result = $query->execute();
 		
+		$record = null;
 		//$sqliteResult = $sqlite->query($queryString);
-		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		while ($row = $result->fetchArray(SQLITE3_ASSOC)) 
 		{
-			$result->finalize();
-			// clean up any objects
-			$sqlite->close();
-			return $record;
+			
+			$record .= $row;
 		}
+		$result->finalize();
+			// clean up any objects
+		$sqlite->close();
+		return $record;
 	}
 	catch (Exception $exception)
 	{
