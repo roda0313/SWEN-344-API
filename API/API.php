@@ -555,33 +555,36 @@ function human_resources_switch($getFunctions)
 	}
 }
 
+//Define Functions Here
+
+// Test connection for Human Resource
 function testThis() {
     return "MOO";
 }
 
-//Define Functions Here
+// Update First and Last name with username
+// Input Parameters:
+//  First name, Last name
+// Main Input Parameter:
+//  Username
 function updateFullName($username, $fname, $lname) {
     $success = false;
-	
-    try 
-	{
+    try {
+        // Open a connection to database
         $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
         $sqlite->enableExceptions(true);
-		
+        // Prevent SQL Injection
         $query = $sqlite->prepare("UPDATE Users SET FIRSTNAME=:fname, LASTNAME=:lname WHERE USERNAME=:username");
+        // Set variables to query
         $query->bindParam(':username',$username);
         $query->bindParam(':fname',$fname);
         $query->bindParam(':lname',$lname);
-		
         $query->execute();
+        // Clear up the connection
         $sqlite->close();
-		
         $success = true;
-    }
-	catch (Exception $exception) 
-	{
-        if ($GLOBALS ["sqliteDebug"]) 
-		{
+    } catch (Exception $exception) {
+        if ($GLOBALS ["sqliteDebug"]) {
 			return $exception->getMessage();
 		}
 		logError($exception);
@@ -590,42 +593,50 @@ function updateFullName($username, $fname, $lname) {
 	return $success;
 }
 
+// Update password with username
+// Input parameter:
+//  Password
+// Main Input Parameter to update specific user:
+//  Username
 function updatePassword($username, $password) {
     $success = false;
-	
-    try 
-	{
+    try {
+        // Open a connection to database
         $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
-        $sqlite->enableExeception(true);
-		
+        $sqlite->enableExceptions(true);
+        // Prevent SQL Injection
         $query = $sqlite->prepare("UPDATE Users SET PASSWORD=:password WHERE USERNAME=:username");
+        // Set variables to query
         $query->bindParam(':username',$username);
         $query->bindParam(':password',encrypt($password));
-		
         $query->execute();
+        // Clear up the connection
         $sqlite->close();
-		
         $success = true;
-    }
-	catch (Exception $exception) 
-	{
-        if ($GLOBALS ["sqliteDebug"])
-        {
+    } catch (Exception $exception) {
+        if ($GLOBALS ["sqliteDebug"]) {
             return $exception->getMessage();
         }
+		logError($exception);
     }
     return $success;
 }
 
+// Update personal information with username
+// Input parameters:
+//  First name, Last name, Email, Address Phone
+// Main Input Parameter to update specific user:
+//  Username
 function updatePersonalInfo($username, $fname, $lname, $email, $address) {
     $success = false;
 	
-    try 
-	{
+    try {
+		// Open a connection to database
         $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
-        $sqlite->enableException(true);
-		
+        $sqlite->enableExceptions(true);
+		// Prevent SQL Injection
         $query = $sqlite->prepare("UPDATE Users SET FIRSTNAME=:fname LASTNAME=:lname EMAIL=:email ADDRESS=:address WHERE USERNAME=:username");
+		// Set variables to query
         $query->bindParam(':username', $username);
         $query->bindParam(':fname', $fname);
         $query->bindParam(':lname', $lname);
@@ -633,48 +644,53 @@ function updatePersonalInfo($username, $fname, $lname, $email, $address) {
         $query->bindParam(':address', $address);
 		
         $query->execute();
-        $sqlite->close();
+        // Clear up the connection
+		$sqlite->close();
 		
         $success = true;
     }
-	catch (Exception $exception) 
-	{
-        if($GLOBAL ["sqliteDebug"]) 
-        {
+	catch (Exception $exception) {
+        if($GLOBAL ["sqliteDebug"]) {
             return $exception->getMessage();
         }
+		logError($exception);
     }
 	
     return $success;
 }
 
+// Update professional information with username
+// Input parameters:
+//  Salary, Title
+// Main Input Parameter to update specific user:
+//  ID
 function updateProfInfo($id, $salary, $title) {
     $success = false;
-	
-    try 
-	{
+    try {
+		// Open a connection to database
         $sqlite = new SQLITE($GLOBALS ["databaseFile"]);
-        $sqlite->enableException(true);
-		
+        $sqlite->enableExceptions(true);
+		// Prevent SQL Injection
         $query = $sqlite->prepare("UPDATE StudentEmployee SET SALARY=:salary TITLE=:title WHERE ID=:id");
+		// Set variables to query
         $query->bindParam(':id', $id);
         $query->bindParam(':salary', $salary);
         $query->bindParam(':title', $title);
         $query->execute();
-		
+		// Clear up the connection
         $sqlite->close();
         $success = true;
     } 
-	catch(Exception $exception) 
-	{
-        if ($GLOBALS ["sqliteDebug"])
-        {
+	catch(Exception $exception) {
+        if ($GLOBALS ["sqliteDebug"]) {
             return $exception->getMessage();
         }
+		logError($exception);
     }
 	
     return $success;
 }
+
 
 
 
