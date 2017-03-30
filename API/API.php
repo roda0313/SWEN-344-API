@@ -1412,7 +1412,6 @@ function getCourseList()
 		$result = $query->execute();
 		
 		$record = array();
-		//$sqliteResult = $sqlite->query($queryString);
 		while($arr=$result->fetchArray(SQLITE3_ASSOC))
 		{
 			array_push($record, $arr);
@@ -1526,7 +1525,6 @@ function toggleCourse($courseID)
 				array_push($resultArray, $sectionResult);
 				
 				$sectionRecord = array();
-				//$sqliteResult = $sqlite->query($queryString);
 				while($arr=$sectionResult->fetchArray(SQLITE3_ASSOC))
 				{
 					array_push($sectionRecord, $arr);
@@ -1573,7 +1571,6 @@ function getSection($sectionID)
 		$query->bindParam(':sectionID', $sectionID);
 		$result = $query->execute();
 		
-		//$sqliteResult = $sqlite->query($queryString);
 		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
 		{
 			$result->finalize();
@@ -1605,7 +1602,6 @@ function getSectionEnrolled($sectionID)
 		$result = $query->execute();
 		
 		$record = array();
-		//$sqliteResult = $sqlite->query($queryString);
 		while($arr=$result->fetchArray(SQLITE3_ASSOC)) 
 		{
 			array_push($record, $arr);
@@ -1639,7 +1635,6 @@ function getSectionWaitlist($sectionID)
 		$result = $query->execute();
 		
 		$record = array();
-		//$sqliteResult = $sqlite->query($queryString);
 		while($arr=$result->fetchArray(SQLITE3_ASSOC))
 		{
 			array_push($record, $arr);
@@ -1667,13 +1662,13 @@ function getCourseSections($courseID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT * FROM Section WHERE COURSE_ID=:courseID AND AVAILABILITY=:avail");
+		$query = $sqlite->prepare("SELECT * FROM Section WHERE COURSE_ID=:courseID AND AVAILABILITY=:availability");
+		$availability = 1;
 		$query->bindParam(':courseID', $courseID);
-		$query->bindParam(':avail', "1");
+		$query->bindParam(':availability', $availability);
 		$result = $query->execute();
 		
 		$record = array();
-		//$sqliteResult = $sqlite->query($queryString);
 		while($arr=$result->fetchArray(SQLITE3_ASSOC))
 		{
 			array_push($record, $arr);
@@ -1700,7 +1695,6 @@ function postSection($maxStudents, $professorID, $courseID, $termID, $classroomI
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
 		
-		//first check if the username already exists
 		$query = $sqlite->prepare("INSERT INTO Section (MAX_STUDENTS, PROFESSOR_ID, COURSE_ID, TERM_ID, CLASSROOM_ID) VALUES (:maxStudents, :professorID, :courseID, :termID, :classroomID)");
 		$query->bindParam(':maxStudents', $maxStudents);
 		$query->bindParam(':professorID', $professorID);
@@ -1737,7 +1731,6 @@ function getStudentSections($studentID)
 		$result = $query->execute();
 		
 		$record = array();
-		//$sqliteResult = $sqlite->query($queryString);
 		while($arr=$result->fetchArray(SQLITE3_ASSOC))
 		{
 			array_push($record, $arr);
@@ -1770,7 +1763,6 @@ function getProfessorSections($professorID)
 		$result = $query->execute();
 		
 		$record = array();
-		//$sqliteResult = $sqlite->query($queryString);
 		while($arr=$result->fetchArray(SQLITE3_ASSOC)) 
 		{
 			array_push($record, $arr);
@@ -1802,7 +1794,6 @@ function getTerms()
 		$result = $query->execute();
 		
 		$record = array();
-		//$sqliteResult = $sqlite->query($queryString);
 		while($arr=$result->fetchArray(SQLITE3_ASSOC))
 		{
 			array_push($record, $arr);
@@ -1834,7 +1825,6 @@ function getTerm($termCode)
 		$query->bindParam(':code', $termCode);
 		$result = $query->execute();
 		
-		//$sqliteResult = $sqlite->query($queryString);
 		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
 		{
 			$result->finalize();
@@ -1860,7 +1850,6 @@ function postTerm($termCode, $startDate, $endDate)
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
 		
-		//first check if the username already exists
 		$query = $sqlite->prepare("INSERT INTO Term (CODE, START_DATE, END_DATE) VALUES (:code, :start_date, :end_date)");
 		$query->bindParam(':code', $termCode);
 		$query->bindParam(':start_date', $startDate);
@@ -1889,7 +1878,6 @@ function enrollStudent($studentID, $sectionID)
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
 		
-		//first check if the username already exists
 		$query = $sqlite->prepare("INSERT INTO Student_Section (STUDENT_ID, SECTION_ID) VALUES (:studentID, :sectionID)");
 		$query->bindParam(':studentID', $studentID);
 		$query->bindParam(':sectionID', $sectionID);
@@ -1919,7 +1907,6 @@ function waitlistStudent($studentID, $sectionID)
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
 		
-		//first check if the username already exists
 		$query = $sqlite->prepare("INSERT INTO Waitlist (SECTION_ID, STUDENT_ID, ADDED_DATE) VALUES (:sectionID, :studentID, :addedDate)");
 		$query->bindParam(':sectionID', $sectionID);
 		$query->bindParam(':studentID', $studentID);
@@ -1948,7 +1935,6 @@ function withdrawStudent($studentID, $sectionID)
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
 		
-		//first check if the username already exists
 		$query = $sqlite->prepare("DELETE FROM Student_Section WHERE STUDENT_ID=:studentID AND SECTION_ID=:sectionID");
 		$query->bindParam(':studentID', $studentID);
 		$query->bindParam(':sectionID', $sectionID);
@@ -1981,7 +1967,6 @@ function getStudentUser($userID)
 		$query->bindParam(':userID', $userID);
 		$result = $query->execute();
 		
-		//$sqliteResult = $sqlite->query($queryString);
 		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
 		{
 			$result->finalize();
