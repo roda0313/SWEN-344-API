@@ -1974,7 +1974,9 @@ function getCoopInfo()
 function grading_switch($getFunctions)
 {
 	// Define the possible Grading function URLs which the page can be accessed from
-	$possible_function_url = array("getStudentGrades");
+	$possible_function_url = array(
+		"getGradeForStudentSection"
+		);
 
 	if ($getFunctions)
 	{
@@ -1985,11 +1987,15 @@ function grading_switch($getFunctions)
 	{
 		switch ($_GET["function"])
 		{
-			case "getStudentGrades":
-				// if has params
-				return getStudentGrades();
-				// else
-				// return "Missing " . $_GET["param-name"]
+			case "getGradeForStudentSection":
+				if (isset($_GET["student_section_id"]))
+				{
+					return getGradeForStudentSection($_GET["student_section_id"]);
+				}
+				else
+				{
+					return "Missing required query param: 'student_section_id'";
+				}
 		}
 	}
 	else
@@ -1998,11 +2004,39 @@ function grading_switch($getFunctions)
 	}
 }
 
-//Define Functions Here
-
-function getStudentGrades()
+/**
+ *	Retrives the row from the Grade table matching the student_section_id
+ *	@param $studentSectionID - the ID matching the studentsection
+ */
+function getGradeForStudentSection($studentSectionID)
 {
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Grade WHERE STUDENT_SECTION_ID=:studentSectionID");
+		$query->bindParam(':studentSectionID', $studentSectionID);
+		$result = $query->execute();
+		
+		//$sqliteResult = $sqlite->query($queryString);
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 /////////////////////
@@ -2056,7 +2090,8 @@ if (isset($_GET["getAllFunctions"]))
 	);
 }
 
-//return JSON array
-exit(json_encode($result));
+//return JSON
+header('Content-type:application/json;charset=utf-8');
+echo json_encode($result);
 
 ?>
