@@ -1860,8 +1860,7 @@ function getStudentUser($userID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT User.ID, User.FIRSTNAME, User.LASTNAME, User.EMAIL, Student.YEAR_LEVEL, Student.GPA FROM User WHERE ID=:ID AND Student WHERE USER_ID=:userID");
-		$query->bindParam(':ID', $userID);
+		$query = $sqlite->prepare("SELECT User.ID, User.FIRSTNAME, User.LASTNAME, User.EMAIL FROM User INNER JOIN Student ON Student.USER_ID = User.ID WHERE User.ID=:userID");
 		$query->bindParam(':userID', $userID);
 		$result = $query->execute();
 		
