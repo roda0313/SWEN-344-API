@@ -723,14 +723,38 @@ function updatePersonalInfo($username, $fname, $lname, $email, $address, $phone)
         $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
         $sqlite->enableExceptions(true);
 		// Prevent SQL Injection
-        $query = $sqlite->prepare("UPDATE User SET FIRSTNAME=:fname LASTNAME=:lname EMAIL=:email ADDRESS=:address WHERE USERNAME=:username");
+        $query = $sqlite->prepare("UPDATE User SET FIRSTNAME=:fname, LASTNAME=:lname, EMAIL=:email WHERE USERNAME=:username");
 		// Set variables to query
         $query->bindParam(':username', $username);
         $query->bindParam(':fname', $fname);
         $query->bindParam(':lname', $lname);
         $query->bindParam(':email', $email);
-        $query->bindParam(':address', $address);
 		
+        $result = $query->execute();
+        $result->finalize();
+
+        // Prevent SQL Injection
+        $query_id = $sqlite->prepare("SELECT ID FROM User WHERE USERNAME=:username");
+        // Set variables to query
+        $query_id->bindParam(":username", $username);
+        $result = $query_id->execute();
+
+        if($record = $result->fetchArray(SQLITE3_ASSOC))
+        {
+            $result->finalize();
+        }
+        else
+        {
+            return "Something went wrong";
+        }
+        $userId = $record['ID'];
+
+        // Prevent SQL Injection
+        $query = $sqlite->prepare("UPDATE UniversityEmployee SET ADDRESS=:address, PHONE=:phone WHERE USER_ID=:userId");
+        // Set variables to query
+        $query->bindParam(":address", $address);
+        $query->bindParam(":phone", $phone);
+        $query->bindParam(":userId", $userId);
         $query->execute();
         // Clear up the connection
 		$sqlite->close();
@@ -761,15 +785,17 @@ function updateProfInfo($id, $salary, $title)
     try
     {
 		// Open a connection to database
-        $sqlite = new SQLITE($GLOBALS ["databaseFile"]);
+        $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
         $sqlite->enableExceptions(true);
+
 		// Prevent SQL Injection
-        $query = $sqlite->prepare("UPDATE UniversityEmployee SET SALARY=:salary TITLE=:title WHERE USER_ID=:id");
+        $query = $sqlite->prepare("UPDATE UniversityEmployee SET SALARY=:salary, TITLE=:title WHERE USER_ID=:id");
 		// Set variables to query
         $query->bindParam(':id', $id);
-        $query->bindParam(':salary', $salary);
+        $query->bindParam(':salary', floatval($salary));
         $query->bindParam(':title', $title);
         $query->execute();
+
 		// Clear up the connection
         $sqlite->close();
         $success = true;
@@ -911,9 +937,11 @@ function createProf($username, $password, $fname, $lname, $email, $role, $manage
         $result->finalize();
 
         // Prevent SQL Injection
-        $query1 = $sqlite->prepare("SELECT ID FROM User WHERE USERNAME=:username");
+        $query_id = $sqlite->prepare("SELECT ID FROM User WHERE USERNAME=:username");
         // Set variables to query
-        $query1->bindParam(":username", $username);
+        $query_id->bindParam(":username", $username);
+        $result = $query_id->execute();
+
         if($record = $result->fetchArray(SQLITE3_ASSOC))
         {
             $result->finalize();
