@@ -1587,7 +1587,11 @@ function getSectionWaitlist($sectionID)
 		
 		$record = array();
 		//$sqliteResult = $sqlite->query($queryString);
+<<<<<<< 870b01f6d82d16a8b382a64f631bf544b8d9cfe6
 		while($arr=$result->fetchArray(SQLITE3_ASSOC))
+=======
+		if ($record = $result->fetchAll(SQLITE3_ASSOC)) 
+>>>>>>> trying another thing for getCourseList
 		{
 			array_push($record, $arr);
 		}
