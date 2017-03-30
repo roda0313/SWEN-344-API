@@ -320,7 +320,11 @@ function getUsers()
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
+<<<<<<< 5d97ea6fe8d85a4c44ed4a7374873c19a88395ef
 		$query = $sqlite->prepare("SELECT ID, USERNAME, FIRSTNAME, LASTNAME, EMAIL, ROLE FROM User");		
+=======
+		$query = $sqlite->prepare("SELECT * FROM User");		
+>>>>>>> added getUsers function, dummy data, getRoom function
 		$result = $query->execute();
 		
 		$record = array();
@@ -1621,11 +1625,7 @@ function getCourseSections($courseID)
 		
 		$record = array();
 		//$sqliteResult = $sqlite->query($queryString);
-<<<<<<< HEAD
-		if ($record = $result->fetchAll(SQLITE3_ASSOC)) 
-=======
 		while($arr=$result->fetchArray(SQLITE3_ASSOC))
->>>>>>> d51e9fe693c9196821bd0993426b94140c0d571d
 		{
 			array_push($record, $arr);
 		}
