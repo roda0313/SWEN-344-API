@@ -1154,6 +1154,7 @@ function student_enrollment_switch($getFunctions)
 			case "getCourseList":
 				return getCourseList();
 			// Calls function that toggles availability of section
+			// returns: "Success" or Error Statement
 			// params: sectionID
 			case "toggleSection":
 				if (isset($_POST["sectionID"]) && $_POST["sectionID"] != null)
@@ -1186,7 +1187,7 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing courseID param";
 				}
-			// returns: created section object
+			// returns: "Success" or Error Statement
 			// params: maxStudents, professorID, courseID, termID, classroomID
 			case "postSection":
 				if ((isset($_POST["maxStudents"]) && $_POST["maxStudents"] != null)
@@ -1206,6 +1207,7 @@ function student_enrollment_switch($getFunctions)
 					return "Missing a parameter";
 				}	
 			// Calls function that toggles availability of course
+			// returns: "Success" or Error Statement
 			// params: courseID
 			case "toggleCourse":
 				if (isset($_POST["courseID"]) && $_POST["courseID"] != null)
@@ -1253,7 +1255,7 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing termCode param";
 				}
-			// returns: created term object
+			// returns: "Success" or Error Statement
 			// params: termCode, startDate, endDate
 			case "postTerm":
 				if ((isset($_POST["termCode"]) && $_POST["termCode"] != null)
@@ -1268,7 +1270,7 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing a parameter";
 				}
-			// returns: student object enrolled in section
+			// returns: "Success" or Error Statement
 			// params: studentID, sectionID
 			case "enrollStudent":
 				if ((isset($_POST["studentID"]) && $_POST["studentID"] != null)
@@ -1280,7 +1282,7 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing a parameter";
 				}
-			// returns: student object waitlisted for section
+			// returns: "Success" or Error Statement
 			// params: studentID, sectionID
 			case "waitlistStudent":
 				if ((isset($_POST["studentID"]) && $_POST["studentID"] != null)
@@ -1292,7 +1294,7 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing a parameter";
 				}
-			// returns: student object withdrawn from section
+			// returns: "Success" or Error Statement
 			// params: studentID, sectionID
 			case "withdrawStudent":
 				if ((isset($_POST["studentID"]) && $_POST["studentID"] != null)
@@ -1419,7 +1421,7 @@ function toggleSection($sectionID)
 		
 		// clean up any objects
 		$sqlite->close();
-		return $record;
+		return "Success";
 	}
 	catch (Exception $exception)
 	{
@@ -1496,7 +1498,7 @@ function toggleCourse($courseID)
 		
 		// clean up any objects
 		$sqlite->close();
-		return $record;
+		return "Success";
 	}
 	catch (Exception $exception)
 	{
