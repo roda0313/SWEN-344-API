@@ -543,7 +543,7 @@ function postCourse($courseCode, $courseName, $credits, $gpa)
 function human_resources_switch($getFunctions)
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
-	$possible_function_url = array("test", "updatePerson", "updateProf", "updateName", "updatePassword", "createProf", "getPersonalInfo", "getProfInfo");
+	$possible_function_url = array("test", "updatePerson", "updateProf", "updateName", "updatePassword", "createProf", "getPersonalInfo", "getProfInfo", "getEmployees", "terminate");
 
 	if ($getFunctions)
 	{
@@ -647,6 +647,24 @@ function human_resources_switch($getFunctions)
 					return "Missing a parameter";
 				}
 			case "getProfInfo":
+				if ((isset($_POST["id"]) && $_POST["id"] != null)
+				){
+						return getProfessionalInfo($_POST["id"]);
+                }
+                else
+                {
+                    return "Missing a parameter";
+                }
+            case "getEmployees":
+				if ((isset($_POST["id"]) && $_POST["id"] != null)
+				){
+						return getEmployees($_POST["id"]);
+                }
+                else
+                {
+                    return "Missing a parameter";
+                }
+            case "terminate":
 				if ((isset($_POST["id"]) && $_POST["id"] != null)
 				){
 						return getProfessionalInfo($_POST["id"]);
@@ -1051,6 +1069,41 @@ function getEmployees($id)
 		logError($exception);
 	}
 	return "ManagerID is not found";
+}
+
+// Mark a University Employee as terminated
+// Input Parameters: 
+//  ID
+function terminate($id)
+{
+	try
+	{
+	// Open a connection to database
+        $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+        $sqlite->enableExceptions(true);
+
+		// Prevent SQL Injection
+		$terminated = 1;
+        $query = $sqlite->prepare("UPDATE UniversityEmployee SET IS_TERMINATED=:terminated WHERE USER_ID=:id");
+		// Set variables to query
+        $query->bindParam(':id', $id);
+        $query->bindParam(':terminated', $terminated);
+        $query->execute();
+
+		// Clear up the connection
+        $sqlite->close();
+        $success = true;
+    } 
+    catch(Exception $exception)
+    {
+        if ($GLOBALS ["sqliteDebug"])
+        {
+            return $exception->getMessage();
+        }
+		logError($exception);
+    }
+	
+    return $success;
 }
 
 
