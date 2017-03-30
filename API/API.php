@@ -598,7 +598,11 @@ function human_resources_switch($getFunctions)
 						$_POST["phone"]
 						);
 						
-				}
+                }
+                else
+                {
+                    return "Missing a parameter";
+                }
 			case "getPersonalInfo":
 				if ((isset($_POST["username"]) && $_POST["username"] != null)
 				){
@@ -610,9 +614,13 @@ function human_resources_switch($getFunctions)
 				}
 			case "getProfInfo":
 				if ((isset($_POST["id"]) && $_POST["id"] != null)
-					){
+				){
 						return getProfessionalInfo($_POST["id"]);
-					}
+                }
+                else
+                {
+                    return "Missing a parameter";
+                }
 		}
 	}
 	else
@@ -745,7 +753,7 @@ function updatePersonalInfo($username, $fname, $lname, $email, $address, $phone)
 // Input parameters:
 //  Salary, Title
 // Main Input Parameter to update specific user:
-//  ID
+//  USER_ID
 function updateProfInfo($id, $salary, $title)
 {
     $success = false;
@@ -756,7 +764,7 @@ function updateProfInfo($id, $salary, $title)
         $sqlite = new SQLITE($GLOBALS ["databaseFile"]);
         $sqlite->enableExceptions(true);
 		// Prevent SQL Injection
-        $query = $sqlite->prepare("UPDATE UniversityEmployee SET SALARY=:salary TITLE=:title WHERE ID=:id");
+        $query = $sqlite->prepare("UPDATE UniversityEmployee SET SALARY=:salary TITLE=:title WHERE USER_ID=:id");
 		// Set variables to query
         $query->bindParam(':id', $id);
         $query->bindParam(':salary', $salary);
@@ -897,10 +905,24 @@ function createProf($username, $password, $fname, $lname, $email, $role, $manage
 		$query1->bindParam(':lname', $lname);
 		$query1->bindParam(':email', $email);
 		$query1->bindParam(':role', $role);
+        
+		$result = $query1->execute();
+        // Release variable
+        $result->finalize();
 
-		$query1->execute();
+        $query1->prepare("SELECT ID FROM User WHERE USERNAME=:username");
+        // Set variables to query
+        $query1->bindParam(":username", $username);
+        if($record = $result->fetchArray(SQLITE3_ASSOC))
+        {
+            $result->finalize();
+        }
+        else
+        {
+            return "Something went wrong";
+        }
+        $userId = $record['ID'];
 
-		$userId = sqlite_last_insert_rowid();
 		// Prevent SQL Injection
 		$query2 = $sqlite->prepare("INSERT INTO UniversityEmployee (USER_ID, MANAGER_ID, TITLE,
 			ADDRESS, SALARY, PHONE) VALUES (:userId, :managerId, :title, :address, :salary, :phone)");
