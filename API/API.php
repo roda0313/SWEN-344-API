@@ -1584,12 +1584,12 @@ function postSection($maxStudents, $professorID, $courseID, $termID, $classroomI
 		$sqlite->enableExceptions(true);
 		
 		//first check if the username already exists
-		$query = $sqlite->prepare("INSERT INTO Section (MAX_STUDENTS, PROFESSOR_ID, COURSE_ID, TERM_ID, CLASSROOM_ID) VALUES (:max_students, :professor_id, :course_id, :term_id, :classroomID)");
-		$query->bindParam(':max_students', $maxStudents);
-		$query->bindParam(':professor_id', $professorID);
-		$query->bindParam(':course_id', $courseID);
-		$query->bindParam(':term_id', $termID);
-		$query->bindParam(':classroom_id', $classroomID);
+		$query = $sqlite->prepare("INSERT INTO Section (MAX_STUDENTS, PROFESSOR_ID, COURSE_ID, TERM_ID, CLASSROOM_ID) VALUES (:maxStudents, :professorID, :courseID, :termID, :classroomID)");
+		$query->bindParam(':maxStudents', $maxStudents);
+		$query->bindParam(':professorID', $professorID);
+		$query->bindParam(':courseID', $courseID);
+		$query->bindParam(':termID', $termID);
+		$query->bindParam(':classroomID', $classroomID);
 		$result = $query->execute();
 		
 		//$sqliteResult = $sqlite->query($queryString);
