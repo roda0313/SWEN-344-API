@@ -1616,7 +1616,7 @@ function getCourseSections($courseID)
 		//prepare query to protect from sql injection
 		$query = $sqlite->prepare("SELECT * FROM Section WHERE COURSE_ID=:courseID AND AVAILABILITY=:avail");
 		$query->bindParam(':courseID', $courseID);
-		$query->bindParam(':avail', 1);
+		$query->bindParam(':avail', "1");
 		$result = $query->execute();
 		
 		$record = array();
@@ -1862,7 +1862,7 @@ function waitlistStudent($studentID, $sectionID)
 	try
 	{
 		date_default_timezone_set('America/New_York');
-		$addedDate = date('m/d/Y');
+		$addedDate = date('m-d-Y');
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
 		
@@ -1924,7 +1924,7 @@ function getStudentUser($userID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT User.ID, User.FIRSTNAME, User.LASTNAME, User.EMAIL FROM User INNER JOIN Student ON Student.USER_ID = User.ID WHERE User.ID=:userID");
+		$query = $sqlite->prepare("SELECT User.ID, User.FIRSTNAME, User.LASTNAME, User.EMAIL, Student.YEAR_LEVEL, Student.GPA FROM User JOIN Student ON Student.USER_ID = User.ID WHERE User.ID=:userID");
 		$query->bindParam(':userID', $userID);
 		$result = $query->execute();
 		
