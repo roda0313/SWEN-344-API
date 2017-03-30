@@ -320,11 +320,7 @@ function getUsers()
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-<<<<<<< 5d97ea6fe8d85a4c44ed4a7374873c19a88395ef
 		$query = $sqlite->prepare("SELECT ID, USERNAME, FIRSTNAME, LASTNAME, EMAIL, ROLE FROM User");		
-=======
-		$query = $sqlite->prepare("SELECT * FROM User");		
->>>>>>> added getUsers function, dummy data, getRoom function
 		$result = $query->execute();
 		
 		$record = array();
