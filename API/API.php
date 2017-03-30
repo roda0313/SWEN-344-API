@@ -20,7 +20,7 @@ $sqliteDebug = true; //SET TO FALSE BEFORE OFFICIAL RELEASE
 function general_switch($getFunctions)
 {
 	// Define the possible general function URLs which the page can be accessed from
-	$possible_function_url = array("test", "login", "createUser", "getStudent", "postStudent", "getProfessor",
+	$possible_function_url = array("test", "login", "createUser", "getUsers", "getStudent", "postStudent", "getProfessor",
 					"getAdmin", "getCourse", "postCourse");
 				
 	if ($getFunctions)
@@ -55,6 +55,9 @@ function general_switch($getFunctions)
 				{
 					return "Missing studentID parameter";
 				}
+			//returns: array of all users in database
+			case "getUsers":
+				return getUsers();
 			// returns: Newly created student object
 			// params: userID, yearLevel, gpa
 			case "postStudent":
@@ -309,6 +312,37 @@ function loginValid($username, $password)
 	return $valid;
 }
 
+function getUsers()
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT ID, USERNAME, FIRSTNAME, LASTNAME, EMAIL, ROLE FROM User");		
+		$result = $query->execute();
+		
+		$record = array();
+		
+		while($arr=$result->fetchArray(SQLITE3_ASSOC))
+		{
+			array_push($record, $arr);
+		}
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return $record;
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
 function getStudent($studentID)
 {
 	try
@@ -1042,11 +1076,14 @@ function facility_management_switch($getFunctions)
 	{
 		switch ($_GET["function"])
 		{
-			case "getFreeRoom":
-				// if has params
-				return getRoom();
-				// else
-				// return "Missing " . $_GET["param-name"]
+			case "getRoom":
+				if (isset($_GET["roomID"])) {
+					return getRoom($roomID);
+				}
+				else 
+				{
+					return "Missing roomID parameter";
+				}
 		}
 	}
 	else
@@ -1057,9 +1094,36 @@ function facility_management_switch($getFunctions)
 
 //Define Functions Here
 
-function getFreeRoom()
+
+//returns: requested room
+//params: roomID
+function getRoom($roomID)
 {
-	return "TODO";
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Clasroom WHERE ID=:roomID");
+		$query->bindParam(':roomID', $roomID);
+		$result = $query->execute();
+		
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 //////////////////////
@@ -1557,7 +1621,11 @@ function getCourseSections($courseID)
 		
 		$record = array();
 		//$sqliteResult = $sqlite->query($queryString);
+<<<<<<< HEAD
+		if ($record = $result->fetchAll(SQLITE3_ASSOC)) 
+=======
 		while($arr=$result->fetchArray(SQLITE3_ASSOC))
+>>>>>>> d51e9fe693c9196821bd0993426b94140c0d571d
 		{
 			array_push($record, $arr);
 		}
