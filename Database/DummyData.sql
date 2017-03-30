@@ -3,6 +3,32 @@ the tables. For usersnames and passwords see the inserts below
 The password used for each user is 'password' with no quotes, encrypted using password_hash()
 */
 
+/*
+Drop existing data
+*/
+DELETE FROM User;
+DELETE FROM Student;
+DELETE FROM Professor;
+DELETE FROM CoopCompany;
+DELETE FROM CoopEmployee;
+DELETE FROM StudentEval;
+DELETE FROM EmployeeEval;
+DELETE FROM Course;
+DELETE FROM Section;
+DELETE FROM Student_Section;
+DELETE FROM Waitlist;
+DELETE FROM Schedule;
+DELETE FROM Term;
+DELETE FROM Prerequisite;
+DELETE FROM Publisher;
+DELETE FROM Book;
+DELETE FROM Author;
+DELETE FROM BookAuthor;
+DELETE FROM SectionBook;
+DELETE FROM Classroom;
+DELETE FROM UniversityEmployee;
+DELETE FROM Grade;
+
 /* 
 User data
 */
@@ -104,3 +130,6 @@ INSERT INTO UniversityEmployee (USER_ID, MANAGER_ID, TITLE, ADDRESS, SALARY) VAL
 /*
 Grading Data
 */
+INSERT INTO Grade (VALUE, IS_LOCKED, LAST_MODIFIED, STUDENT_SECTION_ID) VALUES (90, 0, "2017-03-28 15:30:00.000", 1);
+INSERT INTO Grade (VALUE, IS_LOCKED, LAST_MODIFIED, STUDENT_SECTION_ID) VALUES (75, 0, "2017-03-28 15:30:00.000", 2);
+
