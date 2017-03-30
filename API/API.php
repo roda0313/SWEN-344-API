@@ -789,7 +789,7 @@ function getPersonalInfo($username)
 	{
 		// Open a connection to database
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
-		$sqlite->enableException(true);
+		$sqlite->enableExceptions(true);
 		// Prevent SQL Injection
 		$query = $sqlite->prepare("SELECT * FROM User WHERE USERNAME=:username");
 		// Set variables to query
@@ -829,7 +829,7 @@ function getProfessionalInfo($id)
 	{
 		// Open a connection to database
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
-		$sqlite-> enableException(true);
+		$sqlite-> enableExceptions(true);
 		// Prevent SQL Injection
 		$query = $sqlite->prepare("SELECT * FROM UniversityEmployee WHERE ID=:id");
 		// Set variables to query
