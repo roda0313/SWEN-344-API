@@ -910,7 +910,8 @@ function createProf($username, $password, $fname, $lname, $email, $role, $manage
         // Release variable
         $result->finalize();
 
-        $query1->prepare("SELECT ID FROM User WHERE USERNAME=:username");
+        // Prevent SQL Injection
+        $query1 = $sqlite->prepare("SELECT ID FROM User WHERE USERNAME=:username");
         // Set variables to query
         $query1->bindParam(":username", $username);
         if($record = $result->fetchArray(SQLITE3_ASSOC))
@@ -931,7 +932,7 @@ function createProf($username, $password, $fname, $lname, $email, $role, $manage
 		$query2->bindParam(':managerId', $managerId);
 		$query2->bindParam(':title', $title);
 		$query2->bindParam(':address', $address);
-		$query2->bindParam(':salary', $salary);
+		$query2->bindParam(':salary', floatval($salary));
 		$query2->bindParam(':phone', $phone);
 
 		$query2->execute();
