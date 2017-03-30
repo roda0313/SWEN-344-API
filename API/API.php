@@ -543,7 +543,7 @@ function postCourse($courseCode, $courseName, $credits, $gpa)
 function human_resources_switch($getFunctions)
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
-	$possible_function_url = array("test", "updatePerson", "updateProf", "updateName", "updatePassword", "createProf", "getPersonalInfo", "getProfInfo");
+	$possible_function_url = array("test", "updatePerson", "updateProf", "updateName", "updatePassword", "createProf", "getPersonalInfo", "getProfInfo", "getEmployees", "terminate");
 
 	if ($getFunctions)
 	{
@@ -647,6 +647,24 @@ function human_resources_switch($getFunctions)
 					return "Missing a parameter";
 				}
 			case "getProfInfo":
+				if ((isset($_POST["id"]) && $_POST["id"] != null)
+				){
+						return getProfessionalInfo($_POST["id"]);
+                }
+                else
+                {
+                    return "Missing a parameter";
+                }
+            case "getEmployees":
+				if ((isset($_POST["id"]) && $_POST["id"] != null)
+				){
+						return getEmployees($_POST["id"]);
+                }
+                else
+                {
+                    return "Missing a parameter";
+                }
+            case "terminate":
 				if ((isset($_POST["id"]) && $_POST["id"] != null)
 				){
 						return getProfessionalInfo($_POST["id"]);
@@ -1022,38 +1040,71 @@ function createProf($username, $password, $fname, $lname, $email, $role, $manage
 //  ID
 function getEmployees($id) 
 {
-	// Function is not completed
-	return "TODO";
     try 
-    {
-		// Open a connection to database
-    	// $manager = $sqlite->("SELECT * FROM Users WHERE ID=:id");
-    	$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
 		
-		// prepare query to protect from sql injection
-		$managedEmployees = array();
-		$query = $sqlite->prepare("SELECT * FROM UniversityEmployee WHERE MANAGER_ID=:id");
-		$employees = $query->execute();
-		array_push($managedEmployees, $employees);
-						
-        if ($record = $managedEmployees->fetchArray(SQLITE3_ASSOC)) 
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM UniversityEmployee WHERE MANAGER_ID=:id");	
+		$query->bindParam(":id", $id);
+		$result = $query->execute();
+		
+		$record = array();
+		//$sqliteResult = $sqlite->query($queryString);
+		while($emp=$result->fetchArray(SQLITE3_ASSOC))
 		{
-			$result->finalize();
-			// clean up any objects
-			$sqlite->close();
-			return $record;
+			array_push($record, $emp);
 		}
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return $record;
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+	return "ManagerID is not found";
+}
+
+// Mark a University Employee as terminated
+// Input Parameters: 
+//  ID
+function terminate($id)
+{
+	try
+	{
+	// Open a connection to database
+        $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+        $sqlite->enableExceptions(true);
+
+		// Prevent SQL Injection
+		$terminated = 1;
+        $query = $sqlite->prepare("UPDATE UniversityEmployee SET IS_TERMINATED=:terminated WHERE USER_ID=:id");
+		// Set variables to query
+        $query->bindParam(':id', $id);
+        $query->bindParam(':terminated', $terminated);
+        $query->execute();
+
+		// Clear up the connection
+        $sqlite->close();
+        $success = true;
     } 
-    catch(Exception $exception) 
+    catch(Exception $exception)
     {
         if ($GLOBALS ["sqliteDebug"])
         {
             return $exception->getMessage();
         }
-        logError($exception);
+		logError($exception);
     }
-	return "ManagerID is not found";
+	
+    return $success;
 }
 
 
