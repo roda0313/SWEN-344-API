@@ -1047,6 +1047,7 @@ function getEmployees($id)
 		
 		//prepare query to protect from sql injection
 		$query = $sqlite->prepare("SELECT * FROM UniversityEmployee WHERE MANAGER_ID=:id");	
+		$query->bindParam(":id", $id);
 		$result = $query->execute();
 		
 		$record = array();
