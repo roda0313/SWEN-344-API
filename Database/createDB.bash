@@ -15,6 +15,7 @@ then
 	sqlite3 $fileName < "TeamHumanResources.sql";
 	sqlite3 $fileName < "TeamEnrollment.sql";
 	sqlite3 $fileName < "TeamFacilityManagement.sql";
+	sqlite3 $fileName < "TeamGrading.sql";
 fi
 
 chmod a+rwx $fileName;
