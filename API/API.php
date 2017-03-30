@@ -1022,37 +1022,34 @@ function createProf($username, $password, $fname, $lname, $email, $role, $manage
 //  ID
 function getEmployees($id) 
 {
-	// Function is not completed
-	return "TODO";
     try 
-    {
-		// Open a connection to database
-    	// $manager = $sqlite->("SELECT * FROM Users WHERE ID=:id");
-    	$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
 		
-		// prepare query to protect from sql injection
-		$managedEmployees = array();
-		$query = $sqlite->prepare("SELECT * FROM UniversityEmployee WHERE MANAGER_ID=:id");
-		$employees = $query->execute();
-		array_push($managedEmployees, $employees);
-						
-        if ($record = $managedEmployees->fetchArray(SQLITE3_ASSOC)) 
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM UniversityEmployee WHERE MANAGER_ID=:id");	
+		$result = $query->execute();
+		
+		$record = array();
+		//$sqliteResult = $sqlite->query($queryString);
+		while($emp=$result->fetchArray(SQLITE3_ASSOC))
 		{
-			$result->finalize();
-			// clean up any objects
-			$sqlite->close();
-			return $record;
+			array_push($record, $emp);
 		}
-    } 
-    catch(Exception $exception) 
-    {
-        if ($GLOBALS ["sqliteDebug"])
-        {
-            return $exception->getMessage();
-        }
-        logError($exception);
-    }
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return $record;
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 	return "ManagerID is not found";
 }
 
