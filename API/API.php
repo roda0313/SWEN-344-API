@@ -1334,7 +1334,7 @@ function toggleSection($sectionID)
 			if ($record['AVAILABILITY'] == "0")
 			{
 				//prepare query to protect from sql injection
-				$queryInner = $sqlite->prepare("UPDATE Section SET AVAILABILITY = '1' WHERE ID = sectionID");
+				$queryInner = $sqlite->prepare("UPDATE Section SET AVAILABILITY = '1' WHERE ID =:sectionID");
 				$queryInner->bindParam(':sectionID', $sectionID);		
 				$resultInner = $queryInner->execute();
 				
@@ -1343,7 +1343,7 @@ function toggleSection($sectionID)
 			else
 			{
 				//prepare query to protect from sql injection
-				$queryInner = $sqlite->prepare("UPDATE Section SET AVAILABILITY = '0' WHERE ID = sectionID");
+				$queryInner = $sqlite->prepare("UPDATE Section SET AVAILABILITY = '0' WHERE ID =:sectionID");
 				$queryInner->bindParam(':sectionID', $sectionID);		
 				$resultInner = $queryInner->execute();
 				
@@ -1386,7 +1386,7 @@ function toggleCourse($courseID)
 			if ($record['AVAILABILITY'] == "0")
 			{
 				//prepare query to protect from sql injection
-				$queryInner = $sqlite->prepare("UPDATE Course SET AVAILABILITY = '1' WHERE ID = courseID");
+				$queryInner = $sqlite->prepare("UPDATE Course SET AVAILABILITY = '1' WHERE ID =:courseID");
 				$queryInner->bindParam(':courseID', $courseID);		
 				$resultInner = $queryInner->execute();
 				
@@ -1396,7 +1396,7 @@ function toggleCourse($courseID)
 			{
 				$resultArray = array();
 				//prepare query to protect from sql injection
-				$queryInner = $sqlite->prepare("UPDATE Course SET AVAILABILITY = '0' WHERE ID = courseID");
+				$queryInner = $sqlite->prepare("UPDATE Course SET AVAILABILITY = '0' WHERE ID =:courseID");
 				$queryInner->bindParam(':courseID', $courseID);		
 				$resultInner = $queryInner->execute();
 				
@@ -1418,7 +1418,7 @@ function toggleCourse($courseID)
 				foreach ($sectionRecord as $sectionID)
 				{
 					//prepare query to protect from sql injection
-					$sectionQueryInner = $sqlite->prepare("UPDATE Section SET AVAILABILITY = '0' WHERE ID = sectionID");
+					$sectionQueryInner = $sqlite->prepare("UPDATE Section SET AVAILABILITY = '0' WHERE ID =:sectionID");
 					$sectionQueryInner->bindParam(':sectionID', $sectionID);		
 					$sectionResultInner = $sectionQueryInner->execute();
 					array_push($resultArray, $sectionResultInner);
@@ -1550,7 +1550,7 @@ function getCourseSections($courseID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT * FROM Section WHERE COURSE_ID=:courseID AND AVAILABILITY=:avail");
+		$query = $sqlite->prepare("SELECT * FROM Section WHERE ID=:courseID AND AVAILABILITY=:avail");
 		$query->bindParam(':courseID', $courseID);
 		$query->bindParam(':avail', 1);
 		$result = $query->execute();
@@ -1818,7 +1818,7 @@ function waitlistStudent($studentID, $sectionID)
 		$query = $sqlite->prepare("INSERT INTO Waitlist (SECTION_ID, STUDENT_ID, ADDED_DATE) VALUES (:sectionID, :studentID, :addedDate)");
 		$query->bindParam(':sectionID', $sectionID);
 		$query->bindParam(':studentID', $studentID);
-		$query->bindParam(':studentID', $addedDate);
+		$query->bindParam(':addedDate', $addedDate);
 		$result = $query->execute();
 		
 		//$sqliteResult = $sqlite->query($queryString);
