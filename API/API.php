@@ -1592,14 +1592,10 @@ function postSection($maxStudents, $professorID, $courseID, $termID, $classroomI
 		$query->bindParam(':classroomID', $classroomID);
 		$result = $query->execute();
 		
-		//$sqliteResult = $sqlite->query($queryString);
-		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
-		{
-			$result->finalize();
-			// clean up any objects
-			$sqlite->close();
-			return $record;
-		}
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
 	}
 	catch (Exception $exception)
 	{
@@ -1754,14 +1750,10 @@ function postTerm($termCode, $startDate, $endDate)
 		$query->bindParam(':end_date', $endDate);
 		$result = $query->execute();
 		
-		//$sqliteResult = $sqlite->query($queryString);
-		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
-		{
-			$result->finalize();
-			// clean up any objects
-			$sqlite->close();
-			return $record;
-		}
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
 	}
 	catch (Exception $exception)
 	{
@@ -1786,14 +1778,10 @@ function enrollStudent($studentID, $sectionID)
 		$query->bindParam(':sectionID', $sectionID);
 		$result = $query->execute();
 		
-		//$sqliteResult = $sqlite->query($queryString);
-		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
-		{
-			$result->finalize();
-			// clean up any objects
-			$sqlite->close();
-			return $record;
-		}
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
 	}
 	catch (Exception $exception)
 	{
@@ -1821,14 +1809,10 @@ function waitlistStudent($studentID, $sectionID)
 		$query->bindParam(':addedDate', $addedDate);
 		$result = $query->execute();
 		
-		//$sqliteResult = $sqlite->query($queryString);
-		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
-		{
-			$result->finalize();
-			// clean up any objects
-			$sqlite->close();
-			return $record;
-		}
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
 	}
 	catch (Exception $exception)
 	{
@@ -1853,14 +1837,10 @@ function withdrawStudent($studentID, $sectionID)
 		$query->bindParam(':sectionID', $sectionID);
 		$result = $query->execute();
 		
-		//$sqliteResult = $sqlite->query($queryString);
-		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
-		{
-			$result->finalize();
-			// clean up any objects
-			$sqlite->close();
-			return $record;
-		}
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
 	}
 	catch (Exception $exception)
 	{
