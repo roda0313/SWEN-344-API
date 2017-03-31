@@ -2487,7 +2487,7 @@ function coop_eval_switch($getFunctions)
 			case "getCompanies":
 				if ($_GET['StudentID'])
 				{
-					return getCompanies();
+					return getCompanies($_GET['StudentID']);
 				}
 				else
 				{
@@ -2640,9 +2640,37 @@ function updateStudentEvaluation($array_params)
 	return "TODO";
 }
 
+//Gets all company objects and their asscoiated evaluations
 function getCompanies($studentID)
 {
-	return "TODO";
+	$queryString = "SELECT User.ID, User.USERNAME, CoopCompany.*, CoopEmployee.*, StudentEval.*, EmployeeEval.* FROM User JOIN CoopCompany ON User.ID = CoopCompany.STUDENTID JOIN CoopEmployee ON CoopCompany.ID = CoopEmployee.COMPANYID JOIN StudentEval ON StudentEval.COMPANYID = CoopCompany.ID  AND User.ID = StudentEval.STUDENTID JOIN EmployeeEval ON EmployeeEval.EMPLOYEEID = CoopEmployee.ID AND EmployeeEval.COMPANYID = CoopCompany.ID WHERE User.ID = :studentID";
+	try 
+		{
+			$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+			$sqlite->enableExceptions(true);
+			
+			//prepare query to protect from sql injection
+			$query = $sqlite->prepare($queryString);
+			$query->bindParam(':studentID', $studentID);		
+			$result = $query->execute();
+			
+			if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+			{
+				$result->finalize();
+				$sqlite->close();
+				
+				return $record;
+			}
+		
+		}
+		catch (Exception $exception)
+		{
+			if ($GLOBALS ["sqliteDebug"]) 
+			{
+				return $exception->getMessage();
+			}
+			logError($exception);
+		}
 }
 
 function addCompany($studentID, $name, $address)
