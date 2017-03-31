@@ -1510,36 +1510,12 @@ function toggleCourse($courseID)
 			}
 			else
 			{
-				$resultArray = array();
 				//prepare query to protect from sql injection
 				$queryInner = $sqlite->prepare("UPDATE Course SET AVAILABILITY = '0' WHERE ID =:courseID");
 				$queryInner->bindParam(':courseID', $courseID);		
 				$resultInner = $queryInner->execute();
 				
-				array_push($resultArray, $resultInner);
-				
-				//prepare query to protect from sql injection
-				$sectionQuery = $sqlite->prepare("SELECT ID FROM Section WHERE COURSE_ID=:courseID");		
-				$sectionResult = $sectionQuery->execute();
-				
-				array_push($resultArray, $sectionResult);
-				
-				$sectionRecord = array();
-				while($arr=$sectionResult->fetchArray(SQLITE3_ASSOC))
-				{
-					array_push($sectionRecord, $arr);
-				}
-				
-				foreach ($sectionRecord as $sectionID)
-				{
-					//prepare query to protect from sql injection
-					$sectionQueryInner = $sqlite->prepare("UPDATE Section SET AVAILABILITY = '0' WHERE ID =:sectionID");
-					$sectionQueryInner->bindParam(':sectionID', $sectionID);		
-					$sectionResultInner = $sectionQueryInner->execute();
-					array_push($resultArray, $sectionResultInner);
-				}
-				
-				$result = $resultArray;
+				$result = $resultInner;
 			}
 		}
 	
