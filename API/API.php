@@ -543,7 +543,7 @@ function postCourse($courseCode, $courseName, $credits, $gpa)
 function human_resources_switch($getFunctions)
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
-	$possible_function_url = array("test", "updatePerson", "updateProf", "updateName", "updatePassword", "createProf", "getPersonalInfo", "getProfInfo", "getEmployees", "terminate");
+	$possible_function_url = array("test", "updatePerson", "updateProf", "updateName", "updatePassword", "createProf", "getPersonalInfo", "getProfInfo", "getEmployees", "terminate", "removeEmployee");
 
 	if ($getFunctions)
 	{
@@ -667,7 +667,16 @@ function human_resources_switch($getFunctions)
             case "terminate":
 				if ((isset($_POST["id"]) && $_POST["id"] != null)
 				){
-						return getProfessionalInfo($_POST["id"]);
+						return terminate($_POST["id"]);
+                }
+                else
+                {
+                    return "Missing a parameter";
+                }
+            case "removeEmployee":
+				if ((isset($_POST["id"]) && $_POST["id"] != null)
+				){
+						return removeEmployee($_POST["id"]);
                 }
                 else
                 {
@@ -1080,7 +1089,7 @@ function terminate($id)
 	$success = false;
 	try
 	{
-	// Open a connection to database
+		// Open a connection to database
         $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
         $sqlite->enableExceptions(true);
 
@@ -1091,6 +1100,53 @@ function terminate($id)
         $query->bindParam(':id', $id);
         $query->bindParam(':terminated', $terminated);
         $query->execute();
+
+		// Clear up the connection
+        $sqlite->close();
+        $success = true;
+    } 
+    catch(Exception $exception)
+    {
+        if ($GLOBALS ["sqliteDebug"])
+        {
+            return $exception->getMessage();
+        }
+		logError($exception);
+    }
+	
+    return $success;
+}
+
+// Remove University Employee from the data base
+// Input Parameters: 
+//  ID
+function removeEmployee($id)
+{
+	$success = false;
+	try
+	{
+		// Open a connection to database
+        $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+        $sqlite->enableExceptions(true);
+
+        // Prevent SQL Injection
+        $query = $sqlite->prepare("SELECT MANAGER_ID FROM UniversityEmployee WHERE USER_ID=:id");
+        // Set variables to query
+        $query->bindParam(':id', $id);
+        $managerID = $query->execute();
+        
+        // Prevent SQL Injection
+        $query2 = $sqlite->prepare("UPDATE * FROM UniversityEmployee SET MANAGER_ID=:managerID WHERE MANAGER_ID=:id");
+		// Set variables to query
+		$query2->bindParam(':managerID', $managerID);
+        $query2->bindParam(':id', $id);
+        $query2->execute();
+
+		// Prevent SQL Injection
+        $query3 = $sqlite->prepare("DELETE FROM UniversityEmployee WHERE USER_ID=:id");
+		// Set variables to query
+        $query3->bindParam(':id', $id);
+        $query3->execute();
 
 		// Clear up the connection
         $sqlite->close();
