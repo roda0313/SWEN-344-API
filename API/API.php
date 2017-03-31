@@ -1148,6 +1148,12 @@ function removeEmployee($id)
         $query3->bindParam(':id', $id);
         $query3->execute();
 
+        // Prevent SQL Injection
+        $query4 = $sqlite->prepare("DELETE FROM User WHERE ID=:id");
+        // Set variables to query
+        $query4->bindParam(':id', $id);
+        $query4->execute();
+
 		// Clear up the connection
         $sqlite->close();
         $success = true;
