@@ -1080,7 +1080,7 @@ function terminate($id)
 	$success = false;
 	try
 	{
-	// Open a connection to database
+		// Open a connection to database
         $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
         $sqlite->enableExceptions(true);
 
@@ -1090,6 +1090,40 @@ function terminate($id)
 		// Set variables to query
         $query->bindParam(':id', $id);
         $query->bindParam(':terminated', $terminated);
+        $query->execute();
+
+		// Clear up the connection
+        $sqlite->close();
+        $success = true;
+    } 
+    catch(Exception $exception)
+    {
+        if ($GLOBALS ["sqliteDebug"])
+        {
+            return $exception->getMessage();
+        }
+		logError($exception);
+    }
+	
+    return $success;
+}
+
+// Remove University Employee from the data base
+// Input Parameters: 
+//  ID
+function removeEmployee($id)
+{
+	$success = false;
+	try
+	{
+		// Open a connection to database
+        $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+        $sqlite->enableExceptions(true);
+
+		// Prevent SQL Injection
+        $query = $sqlite->prepare("DELETE FROM UniversityEmployee WHERE USER_ID=:id");
+		// Set variables to query
+        $query->bindParam(':id', $id);
         $query->execute();
 
 		// Clear up the connection
