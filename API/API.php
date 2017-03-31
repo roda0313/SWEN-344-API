@@ -1077,6 +1077,7 @@ function getEmployees($id)
 //  ID
 function terminate($id)
 {
+	$success = false;
 	try
 	{
 	// Open a connection to database
