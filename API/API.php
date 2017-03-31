@@ -1187,7 +1187,7 @@ function student_enrollment_switch($getFunctions)
 	// Define the possible Student Enrollment function URLs which the page can be accessed from
 	$possible_function_url = array("getCourseList", "toggleSection", "getSection", "getCourseSections",
 					"postSection", "toggleCourse", "getStudentSections", "getProfessorSections",
-					"getTerms", "getTerm", "postTerm", "enrollStudent",
+					"getTerms", "getTerm", "postTerm", "enrollStudent", "getPreReqs",
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist",
 					"getStudentUser");
 				
@@ -1389,6 +1389,17 @@ function student_enrollment_switch($getFunctions)
 				else
 				{
 					return "Missing userID parameter";
+				}
+			// returns: the prereqs of a course
+			// params: courseID
+			case "getPreReqs":
+				if (isset($_GET["courseID"]) && $_GET["courseID"] != null)
+				{
+					return getPreReqs($_GET["courseID"]);
+				}
+				else
+				{
+					return "Missing courseID parameter";
 				}
 		}
 	}
@@ -1948,6 +1959,39 @@ function getStudentUser($userID)
 			$sqlite->close();
 			return $record;
 		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function getPreReqs($courseID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT PREREQ_COURSE_ID FROM Prerequisite WHERE COURSE_ID=:courseID");
+		$query->bindParam(':courseID', $courseID);
+		$result = $query->execute();
+		
+		$record = array();
+		while($arr=$result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			array_push($record, $arr);
+		}
+		
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return $record;
 	}
 	catch (Exception $exception)
 	{
