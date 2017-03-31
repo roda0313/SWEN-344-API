@@ -1133,10 +1133,16 @@ function removeEmployee($id)
         $query = $sqlite->prepare("SELECT MANAGER_ID FROM UniversityEmployee WHERE USER_ID=:id");
         // Set variables to query
         $query->bindParam(':id', $id);
-        $managerID = $query->execute();
-        
+        $result = $query->execute();
+
+        if($record = $result->fetchArray(SQLITE3_ASSOC))
+        {
+            $result->finalize();
+        }
+        $managerID = $record["MANAGER_ID"];
+
         // Prevent SQL Injection
-        $query2 = $sqlite->prepare("UPDATE * FROM UniversityEmployee SET MANAGER_ID=:managerID WHERE MANAGER_ID=:id");
+        $query2 = $sqlite->prepare("UPDATE UniversityEmployee SET MANAGER_ID=:managerID WHERE MANAGER_ID=:id");
 		// Set variables to query
 		$query2->bindParam(':managerID', $managerID);
         $query2->bindParam(':id', $id);
