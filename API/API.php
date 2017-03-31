@@ -2627,7 +2627,38 @@ function coop_eval_switch($getFunctions)
 //Define Functions Here
 function getStudentEvaluation($studentID, $comapanyID)
 {
-	return "TODO";
+	try 
+		{
+			$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+			$sqlite->enableExceptions(true);
+			
+			//prepare query to protect from sql injection
+			$query = $sqlite->prepare("SELECT * FROM StudentEval WHERE STUDENTID = :studentID AND COMPANYID = :companyID");
+			$query->bindParam(':studentID', $studentID);
+			$query->bindParam(':companyID', $companyID);		
+			$result = $query->execute();
+			
+			$record = array();
+			
+			while ($arr = $result->fetchArray(SQLITE3_ASSOC)) 
+			{			
+				array_push($record, $arr);
+			}
+			
+			$result->finalize();
+			$sqlite->close();
+			
+			return $record;
+		
+		}
+		catch (Exception $exception)
+		{
+			if ($GLOBALS ["sqliteDebug"]) 
+			{
+				return $exception->getMessage();
+			}
+			logError($exception);
+		}
 }
 
 function addStudentEvaluation($array_params)
@@ -2642,25 +2673,28 @@ function updateStudentEvaluation($array_params)
 
 //Gets all company objects and their asscoiated evaluations
 function getCompanies($studentID)
-{
-	$queryString = "SELECT User.ID, User.USERNAME, CoopCompany.*, CoopEmployee.*, StudentEval.*, EmployeeEval.* FROM User JOIN CoopCompany ON User.ID = CoopCompany.STUDENTID JOIN CoopEmployee ON CoopCompany.ID = CoopEmployee.COMPANYID JOIN StudentEval ON StudentEval.COMPANYID = CoopCompany.ID  AND User.ID = StudentEval.STUDENTID JOIN EmployeeEval ON EmployeeEval.EMPLOYEEID = CoopEmployee.ID AND EmployeeEval.COMPANYID = CoopCompany.ID WHERE User.ID = :studentID";
+{	
 	try 
 		{
 			$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 			$sqlite->enableExceptions(true);
 			
 			//prepare query to protect from sql injection
-			$query = $sqlite->prepare($queryString);
+			$query = $sqlite->prepare("SELECT User.ID, User.USERNAME, CoopCompany.* FROM User JOIN CoopCompany ON CoopCompany.STUDENTID = User.ID WHERE User.ID = :studentID");
 			$query->bindParam(':studentID', $studentID);		
 			$result = $query->execute();
 			
-			if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
-			{
-				$result->finalize();
-				$sqlite->close();
-				
-				return $record;
+			$record = array();
+			
+			while ($arr = $result->fetchArray(SQLITE3_ASSOC)) 
+			{			
+				array_push($record, $arr);
 			}
+			
+			$result->finalize();
+			$sqlite->close();
+			
+			return $record;
 		
 		}
 		catch (Exception $exception)
@@ -2685,7 +2719,37 @@ function updateCompany($studentID, $name, $address)
 
 function getEmployers($companyID)
 {
-	return "TODO";
+	try 
+		{
+			$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+			$sqlite->enableExceptions(true);
+			
+			//prepare query to protect from sql injection
+			$query = $sqlite->prepare("SELECT CoopCompany.*, CoopEmployee.* FROM CoopCompany JOIN CoopEmployee ON CoopCompany.ID = CoopEmployee.COMPANYID WHERE CoopCompany.ID = :companyID");
+			$query->bindParam(':companyID', $companyID);		
+			$result = $query->execute();
+			
+			$record = array();
+			
+			while ($arr = $result->fetchArray(SQLITE3_ASSOC)) 
+			{			
+				array_push($record, $arr);
+			}
+			
+			$result->finalize();
+			$sqlite->close();
+			
+			return $record;
+		
+		}
+		catch (Exception $exception)
+		{
+			if ($GLOBALS ["sqliteDebug"]) 
+			{
+				return $exception->getMessage();
+			}
+			logError($exception);
+		}
 }
 
 //need ID here because its the only unique identifier
@@ -2702,7 +2766,38 @@ function addEmployer($companyID, $fname, $lname, $email)
 
 function getEmployerEvaluation($employeeID, $companyID)
 {
-	return "TODO";
+	try 
+		{
+			$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+			$sqlite->enableExceptions(true);
+			
+			//prepare query to protect from sql injection
+			$query = $sqlite->prepare("SELECT * FROM EmployeeEval WHERE EMPLOYEEID = :employeeID AND COMPANYID = :companyID");
+			$query->bindParam(':employeeID', $employeeID);
+			$query->bindParam(':companyID', $companyID);		
+			$result = $query->execute();
+			
+			$record = array();
+			
+			while ($arr = $result->fetchArray(SQLITE3_ASSOC)) 
+			{			
+				array_push($record, $arr);
+			}
+			
+			$result->finalize();
+			$sqlite->close();
+			
+			return $record;
+		
+		}
+		catch (Exception $exception)
+		{
+			if ($GLOBALS ["sqliteDebug"]) 
+			{
+				return $exception->getMessage();
+			}
+			logError($exception);
+		}
 }
 
 function updateEmployerEvaluation($array_params)
