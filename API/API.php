@@ -1662,10 +1662,8 @@ function getCourseSections($courseID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT * FROM Section WHERE COURSE_ID=:courseID AND AVAILABILITY=:availability");
-		$availability = 1;
+		$query = $sqlite->prepare("SELECT * FROM Section WHERE COURSE_ID=:courseID AND AVAILABILITY=1");
 		$query->bindParam(':courseID', $courseID);
-		$query->bindParam(':availability', $availability);
 		$result = $query->execute();
 		
 		$record = array();
