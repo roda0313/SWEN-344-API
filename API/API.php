@@ -1129,11 +1129,24 @@ function removeEmployee($id)
         $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
         $sqlite->enableExceptions(true);
 
-		// Prevent SQL Injection
-        $query = $sqlite->prepare("DELETE FROM UniversityEmployee WHERE USER_ID=:id");
-		// Set variables to query
+        // Prevent SQL Injection
+        $query = $sqlite->prepare("SELECT MANAGER_ID FROM UniversityEmployee WHERE USER_ID=:id");
+        // Set variables to query
         $query->bindParam(':id', $id);
-        $query->execute();
+        $managerID = $query->execute();
+        
+        // Prevent SQL Injection
+        $query2 = $sqlite->prepare("UPDATE * FROM UniversityEmployee SET MANAGER_ID=:managerID WHERE MANAGER_ID=:id");
+		// Set variables to query
+		$query2->bindParam(':managerID', $managerID);
+        $query2->bindParam(':id', $id);
+        $query2->execute();
+
+		// Prevent SQL Injection
+        $query3 = $sqlite->prepare("DELETE FROM UniversityEmployee WHERE USER_ID=:id");
+		// Set variables to query
+        $query3->bindParam(':id', $id);
+        $query3->execute();
 
 		// Clear up the connection
         $sqlite->close();
