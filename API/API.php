@@ -543,7 +543,7 @@ function postCourse($courseCode, $courseName, $credits, $gpa)
 function human_resources_switch($getFunctions)
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
-	$possible_function_url = array("test", "updatePerson", "updateProf", "updateName", "updatePassword", "createProf", "getPersonalInfo", "getProfInfo", "getEmployees", "terminate");
+	$possible_function_url = array("test", "updatePerson", "updateProf", "updateName", "updatePassword", "createProf", "getPersonalInfo", "getProfInfo", "getEmployees", "terminate", "removeEmployee");
 
 	if ($getFunctions)
 	{
@@ -667,7 +667,16 @@ function human_resources_switch($getFunctions)
             case "terminate":
 				if ((isset($_POST["id"]) && $_POST["id"] != null)
 				){
-						return getProfessionalInfo($_POST["id"]);
+						return terminate($_POST["id"]);
+                }
+                else
+                {
+                    return "Missing a parameter";
+                }
+            case "removeEmployee":
+				if ((isset($_POST["id"]) && $_POST["id"] != null)
+				){
+						return removeEmployee($_POST["id"]);
                 }
                 else
                 {
