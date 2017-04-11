@@ -12,7 +12,7 @@ function student_enrollment_switch($getFunctions)
 					"postSection", "toggleCourse", "getStudentSections", "getProfessorSections",
 					"getTerms", "getTerm", "postTerm", "enrollStudent", "getPreReqs",
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist",
-					"getStudentUser", "getSectionInstructor");
+					"getStudentUser", "getSectionProfessor");
 				
 	if ($getFunctions)
 	{
@@ -225,11 +225,11 @@ function student_enrollment_switch($getFunctions)
 					return "Missing courseID parameter";
 				}
 			// params: sectionID
-			// returns: the instructor of a section
-			case "getSectionInstructor":
+			// returns: the professor of a section
+			case "getSectionProfessor":
 			if (isset($_GET["sectionID"]) && $_GET["sectionID"] != null)
 			{
-				return getSectionInstructor($_GET["sectionID"]);
+				return getSectionProfessor($_GET["sectionID"]);
 			}
 			else
 			{
@@ -837,7 +837,7 @@ function getPreReqs($courseID)
 	}
 }
 
-function getSectionInstructor($sectionID)
+function getSectionProfessor($sectionID)
 {
 	try
 	{
