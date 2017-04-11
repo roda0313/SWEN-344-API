@@ -11,7 +11,6 @@ $result = "An error has occurred";
 
 // needed globals
 $errorLogFile = "errors.txt";
-
 $databaseFile = getcwd(). "/../Database/SWEN344DB.db";
 
 // debug switch
