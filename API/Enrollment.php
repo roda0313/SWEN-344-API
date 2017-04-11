@@ -919,7 +919,7 @@ function getStudentUser($userID)
 		{
 			$result->finalize();
 			// clean up any objects
-			$sqlite->close
+			$sqlite->close();
 			return $record;
 		}
 	}
