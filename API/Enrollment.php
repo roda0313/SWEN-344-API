@@ -12,7 +12,7 @@ function student_enrollment_switch($getFunctions)
 					"postSection", "toggleCourse", "getStudentSections", "getProfessorSections",
 					"getTerms", "getTerm", "postTerm", "enrollStudent", "getPreReqs",
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist",
-					"getStudentUser", "getSectionProfessor");
+					"getStudentUser", "getProfessorUser", "getSectionProfessor");
 				
 	if ($getFunctions)
 	{
@@ -223,6 +223,17 @@ function student_enrollment_switch($getFunctions)
 				else
 				{
 					return "Missing courseID parameter";
+				}
+			// params: userID
+			// return: User object
+			case "getProfessorUser":
+				if (isset($_GET["userID"]) && $_GET["userID"] != null)
+				{
+					return getProfessorUser($_GET["userID"]);
+				}
+				else 
+				{
+					return "Missing userID parameter";
 				}
 			// params: sectionID
 			// returns: the professor of a section
@@ -826,6 +837,35 @@ function getPreReqs($courseID)
 		// clean up any objects
 		$sqlite->close();
 		return $record;
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+function getProfessorUser($userID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT User.ID, User.FIRSTNAME, User.LASTNAME, User.EMAIL, FROM User JOIN Professor ON Professor.USER_ID = User.ID WHERE User.ID=:userID");
+		$query->bindParam(':userID', $userID);
+		$result = $query->execute();
+		
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
 	}
 	catch (Exception $exception)
 	{
