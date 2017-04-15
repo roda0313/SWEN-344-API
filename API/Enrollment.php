@@ -12,7 +12,8 @@ function student_enrollment_switch($getFunctions)
 					"postSection", "toggleCourse", "getStudentSections", "getProfessorSections",
 					"getTerms", "getTerm", "postTerm", "enrollStudent", "getPreReqs",
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist",
-					"getStudentUser", "getProfessorUser", "getSectionProfessor");
+					"getStudentUser", "getProfessorUser", "getSectionProfessor", "updateCourse",
+					"updateSection");
 				
 	if ($getFunctions)
 	{
@@ -246,6 +247,46 @@ function student_enrollment_switch($getFunctions)
 			{
 				return "Missing sectionID parameter";
 			}
+			// returns: "Success" or Error Statement
+			// params: id, courseCode, courseName, credits, minGPA
+			case "updateCourse":
+				if ((isset($_POST["courseCode"]) && $_POST["courseCode"] != null)
+					&& (isset($_POST["courseName"]) && $_POST["courseName"] != null)
+					&& (isset($_POST["credits"]) && $_POST["credits"] != null)
+					&& (isset($_POST["minGPA"]) && $_POST["minGPA"] != null)
+					&& (isset($_POST["id"]) && $_POST["id"] != null)
+				){
+					return updateCourse($_POST["id"],
+						$_POST["courseCode"],
+						$_POST["courseName"],
+						$_POST["credits"],
+						$_POST["minGPA"]
+						);
+				}
+				else {
+					return "Missing parameter(s)";
+				}
+			// returns: "Success" or Error Statement
+			// params: id, maxStudents, professorID, courseID, termID, classroomID
+			case "updateSection":
+				if ((isset($_POST["maxStudents"]) && $_POST["maxStudents"] != null)
+					&& (isset($_POST["professorID"]) && $_POST["professorID"] != null)
+					&& (isset($_POST["courseID"]) && $_POST["courseID"] != null)
+					&& (isset($_POST["termID"]) && $_POST["termID"] != null)
+					&& (isset($_POST["classroomID"]) && $_POST["classroomID"] != null)
+					&& (isset($_POST["id"]) && $_POST["id"] != null)
+				){
+					return updateSection($_POST["id"],
+							$_POST["maxStudents"],
+							$_POST["professorID"],
+							$_POST["courseID"],
+							$_POST["termID"],
+							$_POST["classroomID"]);
+				}
+				else
+				{
+					return "Missing a parameter";
+				}
 		}
 	}
 	else
@@ -708,15 +749,37 @@ function enrollStudent($studentID, $sectionID)
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
 		
-		$query = $sqlite->prepare("INSERT INTO Student_Section (STUDENT_ID, SECTION_ID) VALUES (:studentID, :sectionID)");
-		$query->bindParam(':studentID', $studentID);
-		$query->bindParam(':sectionID', $sectionID);
-		$result = $query->execute();
+		$queryCount = $sqlite->prepare("SELECT STUDENT_ID FROM Student_Section WHERE SECTION_ID = :sectionID");
+		$queryCount->bindParam(':sectionID', $sectionID);
+		$resultCount = $queryCount->execute();
+		$numOfStudents = count($resultCount);
+		$resultCount->finalize();
 		
-		$result->finalize();
-		// clean up any objects
-		$sqlite->close();
-		return "Success";
+		$queryMax = $sqlite->prepare("SELECT MAX_STUDENTS FROM Section WHERE ID = :sectionID");
+		$queryMax->bindParam(':sectionID', $sectionID);
+		$resultMax = $queryMax->execute();
+		
+		if ($recordMax = $resultMax->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$resultMax->finalize();
+			if (!isset($recordMax['MAX_STUDENTS']))
+			{
+				if ($numOfStudents < $recordMax['MAX_STUDENTS'])
+				{
+					$query = $sqlite->prepare("INSERT INTO Student_Section (STUDENT_ID, SECTION_ID) VALUES (:studentID, :sectionID)");
+					$query->bindParam(':studentID', $studentID);
+					$query->bindParam(':sectionID', $sectionID);
+					$result = $query->execute();
+					
+					$result->finalize();
+					// clean up any objects
+					$sqlite->close();
+					return "Success";
+				} else
+				{
+					return "Section is full."
+			}
+		}
 	}
 	catch (Exception $exception)
 	{
@@ -733,7 +796,7 @@ function waitlistStudent($studentID, $sectionID)
 	try
 	{
 		date_default_timezone_set('America/New_York');
-		$addedDate = date('m-d-Y');
+		$addedDate = date('Y-m-d H:i:s.000');
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
 		
@@ -898,6 +961,71 @@ function getSectionProfessor($sectionID)
 		// clean up any objects
 		$sqlite->close();
 		return $record;
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function updateCourse($id, $courseCode, $courseName, $credits, $gpa)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		
+		$query = $sqlite->prepare("UPDATE Course SET COURSE_CODE = :code, NAME = :name, CREDITS = :credits, MIN_GPA = :gpa WHERE ID = :id");
+		$query->bindParam(':code', $courseCode);
+		$query->bindParam(':name', $courseName);
+		$query->bindParam(':credits', $credits);
+		$query->bindParam(':gpa', $gpa);
+		$query->bindParam(':id', $id);
+		$result = $query->execute();
+		
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function updateSection($id, $maxStudents, $professorID, $courseID, $termID, $classroomID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("UPDATE Section SET MAX_STUDENTS = :maxStudents, PROFESSOR_ID = :professorID, COURSE_ID = :courseID, TERM_ID = :termID, CLASSROOM_ID = :classroomID WHERE ID = :id");
+		$query->bindParam(':maxStudents', $maxStudents);
+		$query->bindParam(':professorID', $professorID);
+		$query->bindParam(':courseID', $courseID);
+		$query->bindParam(':termID', $termID);
+		$query->bindParam(':classroomID', $classroomID);
+		$query->bindParam(':id', $id);
+		$result = $query->execute();
+		
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
 	}
 	catch (Exception $exception)
 	{
