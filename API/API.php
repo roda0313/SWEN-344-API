@@ -24,7 +24,7 @@ $sqliteDebug = true; //SET TO FALSE BEFORE OFFICIAL RELEASE
 function general_switch($getFunctions)
 {
 	// Define the possible general function URLs which the page can be accessed from
-	$possible_function_url = array("test", "login", "createUser", "getUsers", "getStudent", "postStudent", "getProfessor",
+	$possible_function_url = array("test", "login", "createUser", "getUsers", "getUser", "getStudent", "postStudent", "getProfessor",
 					"getAdmin", "getCourse", "postCourse");
 				
 	if ($getFunctions)
@@ -58,6 +58,17 @@ function general_switch($getFunctions)
 				else 
 				{
 					return "Missing studentID parameter";
+				}
+			// params: userID
+			// returns: User information
+			case "getUser":
+				if (isset($_GET["userID"]) && $_GET["userID"] != null)
+				{
+					return getUser($_GET["userID"]);
+				}
+				else
+				{
+					return "Missing userID parameter";
 				}
 			//returns: array of all users in database
 			case "getUsers":
@@ -337,6 +348,35 @@ function getUsers()
 		// clean up any objects
 		$sqlite->close();
 		return $record;
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+function getUser($userID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT ID, FIRSTNAME, LASTNAME, EMAIL FROM User");		
+		$result = $query->execute();
+		
+		
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			$sqlite->close();
+			
+			return $record;
+		}
 	}
 	catch (Exception $exception)
 	{
