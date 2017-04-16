@@ -777,7 +777,8 @@ function enrollStudent($studentID, $sectionID)
 					return "Success";
 				} else
 				{
-					return "Section is full."
+					return "Section is full.";
+				}
 			}
 		}
 	}
