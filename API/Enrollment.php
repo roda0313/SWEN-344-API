@@ -13,7 +13,7 @@ function student_enrollment_switch($getFunctions)
 					"getTerms", "getTerm", "postTerm", "enrollStudent", "getPreReqs",
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist",
 					"getStudentUser", "getProfessorUser", "getSectionProfessor", "updateCourse",
-					"updateSection");
+					"updateSection", "getStudentWaitlist", "enrollFromWaitlist", "withdrawFromWaitlist");
 				
 	if ($getFunctions)
 	{
@@ -282,6 +282,40 @@ function student_enrollment_switch($getFunctions)
 							$_POST["courseID"],
 							$_POST["termID"],
 							$_POST["classroomID"]);
+				}
+				else
+				{
+					return "Missing a parameter";
+				}
+			// returns: sections that a student is waitlisted on
+			// params: studentID
+			case "getStudentWaitlist":
+				if (isset($_GET["studentID"]) && $_GET["studentID"] != null)
+				{
+					return getStudentWaitlist($_GET["studentID"]);
+				}
+				else
+				{
+					return "Missing studentID parameter";
+				}
+			// returns: "Success" or Error Statement
+			// params: sectionID
+			case "enrollFromWaitlist":
+				if (isset($_POST["sectionID"]) && $_POST["sectionID"] != null)
+				{
+					return enrollFromWaitlist($_POST["sectionID"]);
+				}
+				else
+				{
+					return "Missing sectionID parameter";
+				}
+			// returns: "Success" or Error Statement
+			// params: studentID, sectionID
+			case "withdrawFromWaitlist":
+				if ((isset($_POST["studentID"]) && $_POST["studentID"] != null)
+					&& (isset($_POST["sectionID"]) && $_POST["sectionID"] != null)
+				){
+					return withdrawFromWaitlist($_POST["studentID"], $_POST["sectionID"]);
 				}
 				else
 				{
@@ -1021,6 +1055,106 @@ function updateSection($id, $maxStudents, $professorID, $courseID, $termID, $cla
 		$query->bindParam(':termID', $termID);
 		$query->bindParam(':classroomID', $classroomID);
 		$query->bindParam(':id', $id);
+		$result = $query->execute();
+		
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function getStudentWaitlist($studentID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT SECTION_ID FROM Waitlist WHERE STUDENT_ID=:studentID");
+		$query->bindParam(':studentID', $studentID);
+		$result = $query->execute();
+		
+		$record = array();
+		while($arr=$result->fetchArray(SQLITE3_ASSOC))
+		{
+			array_push($record, $arr);
+		}
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return $record;
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function enrollFromWaitlist($sectionID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$queryID = $sqlite->prepare("SELECT STUDENT_ID FROM Waitlist WHERE SECTION_ID = :sectionID ORDER BY date(ADDED_DATE) ASC LIMIT 1");
+		$queryID->bindParam(':sectionID', $sectionID);
+		$resultID = $queryID->execute();
+		
+		if ($recordID = $resultID->fetchArray(SQLITE3_ASSOC))
+		{
+			$resultID->finalize();
+			if (!isset($recordID['STUDENT_ID']))
+			{
+				$enrollment = enrollStudent($recordID['STUDENT_ID'], $sectionID);
+				$waitlistRemoval = withdrawFromWaitlist($recordID['STUDENT_ID'], $sectionID);
+				return "Success";
+			}
+			else
+			{
+				return "No Waitlisted Students";
+			}
+		}
+		else
+		{
+			// This should only ever occur during debugging.
+			return "Error Processing Waitlisted Dates";
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function withdrawFromWaitlist($studentID, $sectionID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("DELETE FROM Waitlist WHERE STUDENT_ID=:studentID AND SECTION_ID=:sectionID");
+		$query->bindParam(':studentID', $studentID);
+		$query->bindParam(':sectionID', $sectionID);
 		$result = $query->execute();
 		
 		$result->finalize();
