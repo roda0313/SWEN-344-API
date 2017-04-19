@@ -12,16 +12,8 @@ function student_enrollment_switch($getFunctions)
 					"postSection", "toggleCourse", "getStudentSections", "getProfessorSections",
 					"getTerms", "getTerm", "postTerm", "enrollStudent", "getPreReqs",
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist",
-<<<<<<< HEAD
 					"getStudentUser", "getProfessorUser", "getSectionProfessor", "updateCourse",
 					"updateSection", "getStudentWaitlist", "enrollFromWaitlist", "withdrawFromWaitlist");
-<<<<<<< HEAD
-
-=======
-=======
-					"getStudentUser", "getSectionInstructor");
->>>>>>> adding section/instructor join table
->>>>>>> fixed merge conflict
 				
 	if ($getFunctions)
 	{
@@ -233,7 +225,7 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing courseID parameter";
 				}
-<<<<<<< HEAD
+
 			// params: userID
 			// return: User object
 			case "getProfessorUser":
@@ -250,21 +242,13 @@ function student_enrollment_switch($getFunctions)
 			case "getSectionProfessor":
 			if (isset($_GET["sectionID"]) && $_GET["sectionID"] != null)
 			{
+
 				return getSectionProfessor($_GET["sectionID"]);
-=======
-			// params: sectionID
-			// returns: the instructor of a section
-			case "getSectionInstructor":
-			if (isset($_GET["sectionID"]) && $_GET["sectionID"] != null)
-			{
-				return getSectionInstructor($_GET["sectionID"]);
->>>>>>> adding section/instructor join table
 			}
 			else
 			{
 				return "Missing sectionID parameter";
 			}
-<<<<<<< HEAD
 			// returns: "Success" or Error Statement
 			// params: id, courseCode, courseName, credits, minGPA
 			case "updateCourse":
@@ -339,15 +323,7 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing a parameter";
 				}
-=======
->>>>>>> adding section/instructor join table
-		}
-	}
-	else
-	{
-		return "Function does not exist.";
-	}
-}
+
 
 //Student Enrollment Functions
 
@@ -1192,11 +1168,9 @@ function withdrawFromWaitlist($studentID, $sectionID)
 	}
 }
 
-<<<<<<< HEAD
+
 function getSectionProfessor($sectionID)
-=======
-function getSectionInstructor($sectionID)
->>>>>>> fixed merge conflict
+
 {
 	try
 	{
@@ -1204,11 +1178,7 @@ function getSectionInstructor($sectionID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-<<<<<<< HEAD
 		$query = $sqlite->prepare("SELECT * FROM Section_Professor WHERE SECTION_ID=:sectionID");
-=======
-		$query = $sqlite->prepare("SELECT * FROM Section_Instructor WHERE SECTION_ID=:sectionID");
->>>>>>> fixed merge conflict
 		$query->bindParam(':sectionID', $sectionID);
 		$result = $query->execute();
 		
