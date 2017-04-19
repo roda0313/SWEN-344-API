@@ -322,8 +322,6 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing a parameter";
 				}
-=======
->>>>>>> adding section/instructor join table
 		}
 	}
 	else
