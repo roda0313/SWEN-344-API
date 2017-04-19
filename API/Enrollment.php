@@ -1182,7 +1182,7 @@ function getSectionInstructor($sectionID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT * FROM Section_Instructor WHERE SECTION_ID=:sectionID");
+		$query = $sqlite->prepare("SELECT * FROM Section_Professor WHERE SECTION_ID=:sectionID");
 		$query->bindParam(':sectionID', $sectionID);
 		$result = $query->execute();
 		
