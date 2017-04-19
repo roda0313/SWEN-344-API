@@ -321,6 +321,8 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing a parameter";
 				}
+=======
+>>>>>>> adding section/instructor join table
 		}
 	}
 	else
@@ -899,7 +901,7 @@ function getStudentUser($userID)
 		{
 			$result->finalize();
 			// clean up any objects
-			$sqlite->close();
+			$sqlite->close
 			return $record;
 		}
 	}
@@ -1161,6 +1163,38 @@ function withdrawFromWaitlist($studentID, $sectionID)
 		// clean up any objects
 		$sqlite->close();
 		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function getSectionInstructor($sectionID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Section_Instructor WHERE SECTION_ID=:sectionID");
+		$query->bindParam(':sectionID', $sectionID);
+		$result = $query->execute();
+		
+		$record = array();
+		while($arr=$result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			array_push($record, $arr);
+		}
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return $record;
 	}
 	catch (Exception $exception)
 	{
