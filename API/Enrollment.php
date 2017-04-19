@@ -956,7 +956,7 @@ function getProfessorUser($userID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT User.ID, User.FIRSTNAME, User.LASTNAME, User.EMAIL, FROM User JOIN Professor ON Professor.USER_ID = User.ID WHERE User.ID=:userID");
+		$query = $sqlite->prepare("SELECT User.ID, User.FIRSTNAME, User.LASTNAME, User.EMAIL, User.ROLE FROM User JOIN Professor ON Professor.USER_ID = User.ID WHERE User.ID=:userID");
 		$query->bindParam(':userID', $userID);
 		$result = $query->execute();
 		
