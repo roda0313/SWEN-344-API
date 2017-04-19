@@ -366,7 +366,7 @@ function getUser($userID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT ID, FIRSTNAME, LASTNAME, EMAIL FROM User");		
+		$query = $sqlite->prepare("SELECT ID, FIRSTNAME, LASTNAME, EMAIL, ROLE FROM User");		
 		$result = $query->execute();
 		
 		
