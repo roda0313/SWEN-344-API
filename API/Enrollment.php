@@ -14,6 +14,7 @@ function student_enrollment_switch($getFunctions)
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist",
 					"getStudentUser", "getProfessorUser", "getSectionProfessor", "updateCourse",
 					"updateSection", "getStudentWaitlist", "enrollFromWaitlist", "withdrawFromWaitlist");
+
 				
 	if ($getFunctions)
 	{
@@ -1174,7 +1175,7 @@ function withdrawFromWaitlist($studentID, $sectionID)
 	}
 }
 
-function getSectionInstructor($sectionID)
+function getSectionProfessor($sectionID)
 {
 	try
 	{
