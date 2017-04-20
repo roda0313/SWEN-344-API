@@ -12,12 +12,8 @@ function student_enrollment_switch($getFunctions)
 					"postSection", "toggleCourse", "getStudentSections", "getProfessorSections",
 					"getTerms", "getTerm", "postTerm", "enrollStudent", "getPreReqs",
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist",
-<<<<<<< HEAD
 					"getStudentUser", "getProfessorUser", "getSectionProfessor", "updateCourse",
 					"updateSection", "getStudentWaitlist", "enrollFromWaitlist", "withdrawFromWaitlist");
-=======
-					"getStudentUser", "getProfessorUser", "getSectionProfessor");
->>>>>>> added getProfessorUser endpoint
 				
 	if ($getFunctions)
 	{
@@ -229,10 +225,6 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing courseID parameter";
 				}
-<<<<<<< HEAD
-
-=======
->>>>>>> added getProfessorUser endpoint
 			// params: userID
 			// return: User object
 			case "getProfessorUser":
@@ -330,6 +322,13 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing a parameter";
 				}
+		}
+	} 
+	else {
+		return "Function does not exist";
+
+	}
+}
 
 
 //Student Enrollment Functions
