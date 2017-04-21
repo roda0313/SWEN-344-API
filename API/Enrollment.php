@@ -1174,38 +1174,4 @@ function withdrawFromWaitlist($studentID, $sectionID)
 	}
 }
 
-
-function getSectionProfessor($sectionID)
-
-{
-	try
-	{
-		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
-		$sqlite->enableExceptions(true);
-		
-		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT * FROM Section_Professor WHERE SECTION_ID=:sectionID");
-		$query->bindParam(':sectionID', $sectionID);
-		$result = $query->execute();
-		
-		$record = array();
-		while($arr=$result->fetchArray(SQLITE3_ASSOC)) 
-		{
-			array_push($record, $arr);
-		}
-		$result->finalize();
-		// clean up any objects
-		$sqlite->close();
-		return $record;
-	}
-	catch (Exception $exception)
-	{
-		if ($GLOBALS ["sqliteDebug"]) 
-		{
-			return $exception->getMessage();
-		}
-		logError($exception);
-	}
-}
-
 ?>
