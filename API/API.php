@@ -25,7 +25,8 @@ function general_switch($getFunctions)
 {
 	// Define the possible general function URLs which the page can be accessed from
 	$possible_function_url = array("test", "login", "createUser", "getUsers", "getUser", "getStudent", "postStudent", "getProfessor",
-					"getAdmin", "getCourse", "postCourse");
+					"getAdmin", "getCourse", "postCourse", "deleteUser", "deleteAdmin", "deleteProfessor", "deleteStudent",
+          "deleteSection", "deleteCourse", "deleteStudentSection");
 				
 	if ($getFunctions)
 	{
@@ -155,6 +156,76 @@ function general_switch($getFunctions)
 						logError("createUser ~ Required parameters were not submit correctly.");
 						return ("createUser One or more parameters were not provided");
 					}
+      // returns: "Success" or error message
+			// params: id
+			case "deleteUser":
+				if (isset($_POST["id"]) && $_POST["id"] != null)
+				{
+					return deleteUser($_POST["id"]);
+				}
+				else {
+					return "Missing id";
+				}
+      // returns: "Success" or error message
+			// params: id
+			case "deleteAdmin":
+				if (isset($_POST["id"]) && $_POST["id"] != null)
+				{
+					return deleteAdmin($_POST["id"]);
+				}
+				else {
+					return "Missing id";
+				}
+      // returns: "Success" or error message
+			// params: id
+			case "deleteProfessor":
+				if (isset($_POST["id"]) && $_POST["id"] != null)
+				{
+					return deleteProfessor($_POST["id"]);
+				}
+				else {
+					return "Missing id";
+				}
+      // returns: "Success" or error message
+			// params: id
+			case "deleteStudent":
+				if (isset($_POST["id"]) && $_POST["id"] != null)
+				{
+					return deleteStudent($_POST["id"]);
+				}
+				else {
+					return "Missing id";
+				}
+      // returns: "Success" or error message
+			// params: id
+			case "deleteSection":
+				if (isset($_POST["id"]) && $_POST["id"] != null)
+				{
+					return deleteSection($_POST["id"]);
+				}
+				else {
+					return "Missing id";
+				}
+      // returns: "Success" or error message
+			// params: id
+			case "deleteCourse":
+				if (isset($_POST["id"]) && $_POST["id"] != null)
+				{
+					return deleteCourse($_POST["id"]);
+				}
+				else {
+					return "Missing id";
+				}
+      // returns: "Success" or error message
+			// params: id
+			case "deleteStudentSection":
+				if (isset($_POST["id"]) && $_POST["id"] != null)
+				{
+					return deleteStudentSection($_POST["id"]);
+				}
+				else {
+					return "Missing id";
+				}
 		}
 	}
 	else
@@ -572,6 +643,192 @@ function postCourse($courseCode, $courseName, $credits, $gpa)
 			$sqlite->close();
 			return $record2;
 		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+///////////////////////////////////////
+//API General Tables Delete Functions//
+///////////////////////////////////////
+
+function deleteUser($id)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("DELETE FROM User WHERE ID=:id");
+		$query->bindParam(':id', $id);
+		$result = $query->execute();
+    
+    $result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function deleteAdmin($id)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("DELETE FROM Admin WHERE USER_ID=:id");
+		$query->bindParam(':id', $id);
+		$result = $query->execute();
+    
+    $result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function deleteProfessor($id)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("DELETE FROM Professor WHERE USER_ID=:id");
+		$query->bindParam(':id', $id);
+		$result = $query->execute();
+    
+    $result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function deleteStudent($id)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("DELETE FROM Student WHERE USER_ID=:id");
+		$query->bindParam(':id', $id);
+		$result = $query->execute();
+    
+    $result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function deleteSection($id)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("DELETE FROM Section WHERE ID=:id");
+		$query->bindParam(':id', $id);
+		$result = $query->execute();
+    
+    $result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function deleteCourse($id)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("DELETE FROM Course WHERE ID=:id");
+		$query->bindParam(':id', $id);
+		$result = $query->execute();
+    
+    $result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function deleteStudentSection($id)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("DELETE FROM Student_Section WHERE ID=:id");
+		$query->bindParam(':id', $id);
+		$result = $query->execute();
+    
+    $result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
 	}
 	catch (Exception $exception)
 	{

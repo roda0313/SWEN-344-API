@@ -335,6 +335,48 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing a parameter";
 				}
+      // returns: "Success" or error message
+			// params: id
+			case "deleteSchedule":
+				if (isset($_POST["id"]) && $_POST["id"] != null)
+				{
+					return deleteSchedule($_POST["id"]);
+				}
+				else {
+					return "Missing id";
+				}
+      // returns: "Success" or error message
+			// params: id
+			case "deleteTerm":
+				if (isset($_POST["id"]) && $_POST["id"] != null)
+				{
+					return deleteTerm($_POST["id"]);
+				}
+				else {
+					return "Missing id";
+				}
+      // returns: "Success" or error message
+			// params: id
+			case "deleteSectionProfessor":
+				if (isset($_POST["id"]) && $_POST["id"] != null)
+				{
+					return deleteSectionProfessor($_POST["id"]);
+				}
+				else {
+					return "Missing id";
+				}
+      // returns: "Success" or error message
+			// params: courseID, preReqID
+			case "deletePreReq":
+				if ((isset($_POST["courseID"]) && $_POST["courseID"] != null)
+          && (isset($_POST["preReqID"]) && $_POST["preReqID"] != null))
+				{
+					return deletePreReq($_POST["courseID"], $_POST["preReqID"]);
+				}
+				else {
+					return "Missing parameter(s)";
+				}
+      
 		}
 	} 
 	else {
@@ -1230,6 +1272,115 @@ function withdrawFromWaitlist($studentID, $sectionID)
 		$result = $query->execute();
 		
 		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+//////////////////////////////////////////
+//API Enrollment Tables Delete Functions//
+//////////////////////////////////////////
+
+function deleteSchedule($id)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("DELETE FROM Schedule WHERE SECTION_ID=:id");
+		$query->bindParam(':id', $id);
+		$result = $query->execute();
+    
+    $result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function deleteTerm($id)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("DELETE FROM Term WHERE ID=:id");
+		$query->bindParam(':id', $id);
+		$result = $query->execute();
+    
+    $result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function deleteSectionProfessor($id)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("DELETE FROM Section_Professor WHERE ID=:id");
+		$query->bindParam(':id', $id);
+		$result = $query->execute();
+    
+    $result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function deletePreReq($courseID, $preReqID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("DELETE FROM Prerequisite WHERE COURSE_ID=:courseID AND PREREQ_COURSE_ID=:preReqID");
+		$query->bindParam(':courseID', $courseID);
+    $query->bindParam(':preReqID', $preReqID);
+		$result = $query->execute();
+    
+    $result->finalize();
 		// clean up any objects
 		$sqlite->close();
 		return "Success";
