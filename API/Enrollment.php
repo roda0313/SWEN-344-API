@@ -13,7 +13,8 @@ function student_enrollment_switch($getFunctions)
 					"getTerms", "getTerm", "postTerm", "enrollStudent", "getPreReqs", "postPreReq",
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist",
 					"getStudentUser", "getProfessorUser", "getSectionProfessor", "updateCourse",
-					"updateSection", "getStudentWaitlist", "enrollFromWaitlist", "withdrawFromWaitlist");
+					"updateSection", "getStudentWaitlist", "enrollFromWaitlist", "withdrawFromWaitlist",
+          "deleteSchedule", "deletePreReq", "deleteTerm", "deleteSectionProfessor");
 				
 	if ($getFunctions)
 	{
