@@ -193,8 +193,6 @@ function encrypt($string)
 //returns true if successful, else false
 function createUser($username, $password, $fname, $lname, $email, $role)
 {
-	$success = FALSE;
-
 	try
 	{
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
@@ -221,14 +219,20 @@ function createUser($username, $password, $fname, $lname, $email, $role)
 		$query1->bindParam(':lname', $lname);
 		$query1->bindParam(':email', $email);
 		$query1->bindParam(':role', $role);
-
 		$query1->execute();
 
-		// clean up any objects
-		$sqlite->close();
-
 		//if it gets here without throwing an error, assume success = true;
-		$success = TRUE;
+    $query2 = $sqlite->prepare("SELECT ID FROM User WHERE USERNAME=:username");
+		$query2->bindParam(':username', $username);
+		$result2 = $query2->execute();
+
+		if ($record2 = $result2->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result2->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record2;
+		}
 	}
 	catch (Exception $exception)
 	{
@@ -238,8 +242,6 @@ function createUser($username, $password, $fname, $lname, $email, $role)
 		}
 		logError($exception);
 	}
-
-	return $success;
 }
 
 function login($username, $password)
@@ -366,7 +368,8 @@ function getUser($userID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT ID, FIRSTNAME, LASTNAME, EMAIL, ROLE FROM User");		
+		$query = $sqlite->prepare("SELECT ID, FIRSTNAME, LASTNAME, EMAIL, ROLE FROM User WHERE ID=:userID");
+    $query->bindParam(':userID', $userID);
 		$result = $query->execute();
 		
 		
@@ -418,7 +421,7 @@ function getStudent($studentID)
 	}
 }
 
-function postStudent($yearLevel, $gpa)
+function postStudent($userID, $yearLevel, $gpa)
 {
 	try
 	{
@@ -426,8 +429,9 @@ function postStudent($yearLevel, $gpa)
 		$sqlite->enableExceptions(true);
 		
 		
-		$query = $sqlite->prepare("INSERT INTO Student (YEAR_LEVEL, GPA) VALUES (:yearLevel, :gpa)");
-		$query->bindParam(':yearLevel', $yearLevel);
+		$query = $sqlite->prepare("INSERT INTO Student (USER_ID, YEAR_LEVEL, GPA) VALUES (:userID, :yearLevel, :gpa)");
+		$query->bindParam(':userID', $userID);
+    $query->bindParam(':yearLevel', $yearLevel);
 		$query->bindParam(':gpa', $gpa);
 		$result = $query->execute();
 		
