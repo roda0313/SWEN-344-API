@@ -435,12 +435,17 @@ function postStudent($userID, $yearLevel, $gpa)
 		$query->bindParam(':gpa', $gpa);
 		$result = $query->execute();
 		
-		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		//if it gets here without throwing an error, assume success = true;
+    $query2 = $sqlite->prepare("SELECT ID FROM User WHERE ID=:userID");
+		$query2->bindParam(':userID', $userID);
+		$result2 = $query2->execute();
+
+		if ($record2 = $result2->fetchArray(SQLITE3_ASSOC)) 
 		{
-			$result->finalize();
+			$result2->finalize();
 			// clean up any objects
 			$sqlite->close();
-			return $record;
+			return $record2;
 		}
 	}
 	catch (Exception $exception)
@@ -554,13 +559,18 @@ function postCourse($courseCode, $courseName, $credits, $gpa)
 		$query->bindParam(':credits', $credits);
 		$query->bindParam(':gpa', $gpa);
 		$result = $query->execute();
-		
-		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+    
+    //if it gets here without throwing an error, assume success = true;
+    $query2 = $sqlite->prepare("SELECT ID FROM Course WHERE COURSE_CODE=:courseCode");
+		$query2->bindParam(':courseCode', $courseCode);
+		$result2 = $query2->execute();
+
+		if ($record2 = $result2->fetchArray(SQLITE3_ASSOC)) 
 		{
-			$result->finalize();
+			$result2->finalize();
 			// clean up any objects
 			$sqlite->close();
-			return $record;
+			return $record2;
 		}
 	}
 	catch (Exception $exception)

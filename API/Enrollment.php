@@ -10,7 +10,7 @@ function student_enrollment_switch($getFunctions)
 	// Define the possible Student Enrollment function URLs which the page can be accessed from
 	$possible_function_url = array("getCourseList", "toggleSection", "getSection", "getCourseSections",
 					"postSection", "toggleCourse", "getStudentSections", "getProfessorSections",
-					"getTerms", "getTerm", "postTerm", "enrollStudent", "getPreReqs",
+					"getTerms", "getTerm", "postTerm", "enrollStudent", "getPreReqs", "postPreReq",
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist",
 					"getStudentUser", "getProfessorUser", "getSectionProfessor", "updateCourse",
 					"updateSection", "getStudentWaitlist", "enrollFromWaitlist", "withdrawFromWaitlist");
@@ -62,7 +62,7 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing courseID param";
 				}
-			// returns: "Success" or Error Statement
+			// returns: ID of Section created
 			// params: maxStudents, professorID, courseID, termID, classroomID
 			case "postSection":
 				if ((isset($_POST["maxStudents"]) && $_POST["maxStudents"] != null)
@@ -130,7 +130,7 @@ function student_enrollment_switch($getFunctions)
 				{
 					return "Missing termCode param";
 				}
-			// returns: "Success" or Error Statement
+			// returns: ID of term created
 			// params: termCode, startDate, endDate
 			case "postTerm":
 				if ((isset($_POST["termCode"]) && $_POST["termCode"] != null)
@@ -213,6 +213,19 @@ function student_enrollment_switch($getFunctions)
 				else
 				{
 					return "Missing userID parameter";
+				}
+      // returns: PreReq Item
+			// params: courseID, preReqID
+			case "postPreReq":
+				if ((isset($_POST["courseID"]) && $_POST["courseID"] != null)
+					&& (isset($_POST["preReqID"]) && $_POST["preReqID"] != null)
+				){
+					return postPreReq($_POST["courseID"],
+							$_POST["preReqID"]);
+				}
+				else
+				{
+					return "Missing a parameter";
 				}
 			// returns: the prereqs of a course
 			// params: courseID
@@ -610,10 +623,22 @@ function postSection($maxStudents, $professorID, $courseID, $termID, $classroomI
 		$query->bindParam(':classroomID', $classroomID);
 		$result = $query->execute();
 		
-		$result->finalize();
-		// clean up any objects
-		$sqlite->close();
-		return "Success";
+		//if it gets here without throwing an error, assume success = true;
+    $query2 = $sqlite->prepare("SELECT ID FROM Section WHERE MAX_STUDENTS=:maxStudents AND PROFESSOR_ID=:professorID AND COURSE_ID=:courseID AND TERM_ID=:termID AND CLASSROOM_ID=classroomID");
+		$query2->bindParam(':maxStudents', $maxStudents);
+		$query2->bindParam(':professorID', $professorID);
+		$query2->bindParam(':courseID', $courseID);
+		$query2->bindParam(':termID', $termID);
+		$query2->bindParam(':classroomID', $classroomID);
+		$result2 = $query2->execute();
+
+		if ($record2 = $result2->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result2->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record2;
+		}
 	}
 	catch (Exception $exception)
 	{
@@ -763,10 +788,18 @@ function postTerm($termCode, $startDate, $endDate)
 		$query->bindParam(':end_date', $endDate);
 		$result = $query->execute();
 		
-		$result->finalize();
-		// clean up any objects
-		$sqlite->close();
-		return "Success";
+		//if it gets here without throwing an error, assume success = true;
+    $query2 = $sqlite->prepare("SELECT ID FROM Term WHERE CODE=:code");
+		$query2->bindParam(':code', $termCode);
+		$result2 = $query2->execute();
+
+		if ($record2 = $result2->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result2->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record2;
+		}
 	}
 	catch (Exception $exception)
 	{
@@ -947,6 +980,43 @@ function getPreReqs($courseID)
 		logError($exception);
 	}
 }
+
+function postPreReq($courseID, $preReqID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("INSERT INTO Prerequisite (COURSE_ID, PREREQ_COURSE_ID) VALUES (:courseID, :preReqID)");
+		$query->bindParam(':courseID', $courseID);
+		$query->bindParam(':preReqID', $preReqID);
+		$result = $query->execute();
+		
+		//if it gets here without throwing an error, assume success = true;
+    $query2 = $sqlite->prepare("SELECT * FROM Prerequisite WHERE COURSE_ID=:courseID AND PREREQ_COURSE_ID=:preReqID");
+		$query2->bindParam(':courseID', $courseID);
+		$query2->bindParam(':preReqID', $preReqID);
+		$result2 = $query2->execute();
+
+		if ($record2 = $result2->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result2->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record2;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
 function getProfessorUser($userID)
 {
 	try
