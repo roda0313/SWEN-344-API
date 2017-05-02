@@ -378,9 +378,9 @@ function getPersonalInfo($username)
 	return $success;
 }
 
-// Get professional information (such as salary, title, etc) with ID
+// Get professional information (such as salary, title, etc) with USER_ID
 // Input Parameters:
-//  ID
+//  USER_ID
 function getProfessionalInfo($id)
 {
 	$success = false;
@@ -391,7 +391,7 @@ function getProfessionalInfo($id)
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite-> enableExceptions(true);
 		// Prevent SQL Injection
-		$query = $sqlite->prepare("SELECT * FROM UniversityEmployee WHERE ID=:id");
+		$query = $sqlite->prepare("SELECT * FROM UniversityEmployee WHERE USER_ID=:id");
 		// Set variables to query
 		$query->bindParam(':id', $id);
 		$result = $query->execute();
