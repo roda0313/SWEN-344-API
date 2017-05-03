@@ -666,7 +666,7 @@ function postSection($maxStudents, $professorID, $courseID, $termID, $classroomI
 		$result = $query->execute();
 		
 		//if it gets here without throwing an error, assume success = true;
-    $query2 = $sqlite->prepare("SELECT ID FROM Section WHERE MAX_STUDENTS=:maxStudents AND PROFESSOR_ID=:professorID AND COURSE_ID=:courseID AND TERM_ID=:termID AND CLASSROOM_ID=classroomID");
+    $query2 = $sqlite->prepare("SELECT ID FROM Section WHERE MAX_STUDENTS=:maxStudents AND PROFESSOR_ID=:professorID AND COURSE_ID=:courseID AND TERM_ID=:termID AND CLASSROOM_ID=:classroomID");
 		$query2->bindParam(':maxStudents', $maxStudents);
 		$query2->bindParam(':professorID', $professorID);
 		$query2->bindParam(':courseID', $courseID);
