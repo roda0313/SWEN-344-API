@@ -14,7 +14,7 @@ function student_enrollment_switch($getFunctions)
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist",
 					"getStudentUser", "getProfessorUser", "getSectionProfessor", "updateCourse",
 					"updateSection", "getStudentWaitlist", "enrollFromWaitlist", "withdrawFromWaitlist",
-          "deleteSchedule", "deletePreReq", "deleteTerm", "deleteSectionProfessor");
+					"deleteSchedule", "deletePreReq", "deleteTerm", "deleteSectionProfessor");
 				
 	if ($getFunctions)
 	{
@@ -377,7 +377,6 @@ function student_enrollment_switch($getFunctions)
 				else {
 					return "Missing parameter(s)";
 				}
-      
 		}
 	} 
 	else {
@@ -701,7 +700,7 @@ function getStudentSections($studentID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT SECTION_ID FROM Student_Section WHERE STUDENT_ID=:studentID");
+		$query = $sqlite->prepare("SELECT * FROM Student_Section WHERE STUDENT_ID=:studentID");
 		$query->bindParam(':studentID', $studentID);
 		$result = $query->execute();
 		

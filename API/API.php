@@ -472,13 +472,13 @@ function getStudent($studentID)
 		$query = $sqlite->prepare("SELECT * FROM Student WHERE USER_ID=:user_ID");
 		$query->bindParam(':user_ID', $studentID);
 		$result = $query->execute();
-		
+
 		//$sqliteResult = $sqlite->query($queryString);
 		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
 		{
 			$result->finalize();
 			$sqlite->close();
-			
+
 			return $record;
 		}
 	}
@@ -593,7 +593,7 @@ function getCourse($courseID)
 	{
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
-		
+
 		$query = $sqlite->prepare("SELECT * FROM Course WHERE ID=:ID");
 		$query->bindParam(':ID', $courseID);
 		$result = $query->execute();
