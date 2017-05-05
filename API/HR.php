@@ -8,7 +8,7 @@
 function human_resources_switch($getFunctions)
 {
 	// Define the possible Human Resources function URLs which the page can be accessed from
-	$possible_function_url = array("test", "updatePerson", "updateProf", "updateName", "updatePassword", "createProf", "getPersonalInfo", "getProfInfo", "getEmployees", "terminate", "removeEmployee");
+	$possible_function_url = array("test", "updatePerson", "updateProf", "updateName", "updatePassword", "createProf", "getPersonalInfo", "getProfInfo", "getEmployees", "terminate", "removeEmployee", "getAllEmployees");
 
 	if ($getFunctions)
 	{
@@ -147,6 +147,8 @@ function human_resources_switch($getFunctions)
                 {
                     return "Missing a parameter";
                 }
+            case "getAllEmployees":
+                return getAllEmployees();
 		}
 	}
 	else
@@ -639,6 +641,31 @@ function removeEmployee($id)
     }
 	
     return $success;
+}
+
+// Get all employees from the HR database
+// Input Parameters: none
+function getAllEmployees()
+{
+    // Open a connection to database
+    $sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+    $sqlite->enableExceptions(true);
+
+    // Prevent SQL injection
+    $query = $sqlite->prepare("SELECT * FROM UniversityEmployee");
+    $result = $query->execute();
+
+    $record = array();
+
+    while($emp=$result->fetchArray(SQLITE3_ASSOC))
+    {
+        array_push($record, $emp);
+    }
+
+    // Clear up the connection
+    $result->finalize();
+    $sqlite->close();
+    return $record;
 }
 
 ?>
