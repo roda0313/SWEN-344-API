@@ -666,7 +666,7 @@ function postSection($maxStudents, $professorID, $courseID, $termID, $classroomI
 		$result = $query->execute();
 		
 		//if it gets here without throwing an error, assume success = true;
-    $query2 = $sqlite->prepare("SELECT ID FROM Section WHERE MAX_STUDENTS=:maxStudents AND PROFESSOR_ID=:professorID AND COURSE_ID=:courseID AND TERM_ID=:termID AND CLASSROOM_ID=classroomID");
+    $query2 = $sqlite->prepare("SELECT ID FROM Section WHERE MAX_STUDENTS=:maxStudents AND PROFESSOR_ID=:professorID AND COURSE_ID=:courseID AND TERM_ID=:termID AND CLASSROOM_ID=:classroomID");
 		$query2->bindParam(':maxStudents', $maxStudents);
 		$query2->bindParam(':professorID', $professorID);
 		$query2->bindParam(':courseID', $courseID);
@@ -860,38 +860,15 @@ function enrollStudent($studentID, $sectionID)
 		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
 		$sqlite->enableExceptions(true);
 		
-		$queryCount = $sqlite->prepare("SELECT STUDENT_ID FROM Student_Section WHERE SECTION_ID = :sectionID");
-		$queryCount->bindParam(':sectionID', $sectionID);
-		$resultCount = $queryCount->execute();
-		$numOfStudents = count($resultCount);
-		$resultCount->finalize();
-		
-		$queryMax = $sqlite->prepare("SELECT MAX_STUDENTS FROM Section WHERE ID = :sectionID");
-		$queryMax->bindParam(':sectionID', $sectionID);
-		$resultMax = $queryMax->execute();
-		
-		if ($recordMax = $resultMax->fetchArray(SQLITE3_ASSOC)) 
-		{
-			$resultMax->finalize();
-			if (!isset($recordMax['MAX_STUDENTS']))
-			{
-				if ($numOfStudents < $recordMax['MAX_STUDENTS'])
-				{
-					$query = $sqlite->prepare("INSERT INTO Student_Section (STUDENT_ID, SECTION_ID) VALUES (:studentID, :sectionID)");
-					$query->bindParam(':studentID', $studentID);
-					$query->bindParam(':sectionID', $sectionID);
-					$result = $query->execute();
+		$query = $sqlite->prepare("INSERT INTO Student_Section (STUDENT_ID, SECTION_ID) VALUES (:studentID, :sectionID)");
+		$query->bindParam(':studentID', $studentID);
+		$query->bindParam(':sectionID', $sectionID);
+		$result = $query->execute();
 					
-					$result->finalize();
-					// clean up any objects
-					$sqlite->close();
-					return "Success";
-				} else
-				{
-					return "Section is full.";
-				}
-			}
-		}
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+    return "Success";
 	}
 	catch (Exception $exception)
 	{
