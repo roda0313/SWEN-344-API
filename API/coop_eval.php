@@ -33,11 +33,11 @@ function coop_eval_switch($getFunctions)
 					return NULL;
 				}
 			case "addStudentEvaluation":
-				if (isset($_POST['STUDENTID']) && isset($_POST['COMPANYID']))
+				if (isset($_POST['studentID']) && isset($_POST['companyID']))
 				{
 					return addStudentEvaluation(array(
-						'studentID'=>$_POST['StudentID'],
-						'companyID'=>$_POST['CompanyID'],
+						'studentID'=>$_POST['studentID'],
+						'companyID'=>$_POST['companyID'],
 						'name'=>$_POST['name'],
 						'email'=>$_POST['email'],
 						'ename'=>$_POST['ename'],
@@ -55,11 +55,11 @@ function coop_eval_switch($getFunctions)
 					return NULL;
 				}
 			case "updateStudentEvaluation":
-				if (isset($_POST['STUDENTID']) && isset($_POST['COMPANYID']))
+				if (isset($_POST['studentID']) && isset($_POST['companyID']))
 				{
 					return updateStudentEvaluation(array(
-						'studentID'=>$_POST['StudentID'],
-						'companyID'=>$_POST['CompanyID'],
+						'studentID'=>$_POST['studentID'],
+						'companyID'=>$_POST['companyID'],
 						'name'=>$_POST['name'],
 						'email'=>$_POST['email'],
 						'eemail'=>$_POST['eemail'],
@@ -154,11 +154,11 @@ function coop_eval_switch($getFunctions)
 					return NULL;
 				}
 			case "updateEmployerEvaluation":
-				if (isset($_POST['EMPLOYEEID']) && isset($_POST['COMPANYID']))
+				if (isset($_POST['employeeID']) && isset($_POST['companyID']))
 				{
 					return updateEmployerEvaluation(array(
-						'employeeID'=>$_POST['EmployeeID'],
-						'companyID'=>$_POST['CompanyID'],
+						'employeeID'=>$_POST['employeeID'],
+						'companyID'=>$_POST['companyID'],
 						'name'=>$_POST['name'],
 						'email'=>$_POST['email'],
 						'sname'=>$_POST['sname'],
@@ -176,11 +176,11 @@ function coop_eval_switch($getFunctions)
 					return NULL;
 				}
 			case "addEmployerEvaluation":
-				if (isset($_POST['EMPLOYEEID']) && isset($_POST['COMPANYID']))
+				if (isset($_POST['employeeID']) && isset($_POST['companyID']))
 				{
 					return updateEmployerEvaluation(array(
-						'employeeID'=>$_POST['EmployeeID'],
-						'companyID'=>$_POST['CompanyID'],
+						'employeeID'=>$_POST['employeeID'],
+						'companyID'=>$_POST['companyID'],
 						'name'=>$_POST['name'],
 						'email'=>$_POST['email'],
 						'sname'=>$_POST['sname'],
@@ -311,7 +311,7 @@ function addStudentEvaluation($array_params)
 		$result->finalize();
 		$sqlite->close();
 		
-		return $record;
+		return $result;
 	
 	}
 	catch (Exception $exception)
@@ -383,7 +383,7 @@ function updateStudentEvaluation($array_params)
 		$result->finalize();
 		$sqlite->close();
 		
-		return $record;
+		return $result;
 	
 	}
 	catch (Exception $exception)
@@ -446,17 +446,10 @@ function addCompany($studentID, $name, $address)
 		$query->bindParam(':address', $address);
 		$result = $query->execute();
 		
-		$record = array();
-		
-		while ($arr = $result->fetchArray(SQLITE3_ASSOC)) 
-		{			
-			array_push($record, $arr);
-		}
-		
 		$result->finalize();
 		$sqlite->close();
 		
-		return $record;
+		return $result;
 	
 	}
 	catch (Exception $exception)
@@ -483,17 +476,10 @@ function updateCompany($studentID, $name, $address)
 		$query->bindParam(':address', $address);
 		$result = $query->execute();
 		
-		$record = array();
-		
-		while ($arr = $result->fetchArray(SQLITE3_ASSOC)) 
-		{			
-			array_push($record, $arr);
-		}
-		
 		$result->finalize();
 		$sqlite->close();
 		
-		return $record;
+		return $result;
 	
 	}
 	catch (Exception $exception)
@@ -644,12 +630,116 @@ function getEmployerEvaluation($employeeID, $companyID)
 
 function updateEmployerEvaluation($array_params)
 {
-	return "TODO";
+	$complete = true;
+	
+	foreach ($array_params as $value)
+	{
+		if ($value == null)
+		{
+			$complete = false;
+		}
+	}
+	
+	$queryString = "UPDATE EmployeeEval SET
+	(EMPLOYEEID = :employeeID, COMPANYID = :companyID, NAME = :name, 
+	EMAIL = :email, SNAME = :sname, SEMAIL = :semail, POSITION = :position, 
+	QUESTION1 = :q1, QUESTION2 = :q2, QUESTION3 = :q3, QUESTION4 = :q4, QUESTION5 = :q5, COMPLETE = :complete)
+	WHERE EMPLOYEEID = :employeeID AND COMPANYID = :companyID";
+	
+	try 
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare($queryString);
+		$query->bindParam(':employeeID', $array_params['employeeID']);
+		$query->bindParam(':companyID', $array_params['companyID']);
+		$query->bindParam(':name', $array_params['name']);	
+		$query->bindParam(':email', $array_params['email']);
+		$query->bindParam(':sname', $array_params['sname']);
+		$query->bindParam(':semail', $array_params['semail']);
+		$query->bindParam(':position', $array_params['position']);
+		$query->bindParam(':q1', $array_params['q1']);
+		$query->bindParam(':q2', $array_params['q2']);
+		$query->bindParam(':q3', $array_params['q3']);
+		$query->bindParam(':q4', $array_params['q4']);
+		$query->bindParam(':q5', $array_params['q5']);
+		$query->bindParam(':complete', $complete);
+		
+		$result = $query->execute();
+		
+		$result->finalize();
+		$sqlite->close();
+		
+		return $result;
+	
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 function addEmployerEvaluation($array_params)
 {
-	return "TODO";
+	$complete = true;
+	
+	foreach ($array_params as $value)
+	{
+		if ($value == null)
+		{
+			$complete = false;
+		}
+	}
+	
+	$queryString = "INSERT INTO EmployeeEval
+	(EMPLOYEEID, COMPANYID, NAME, EMAIL, SNAME, SEMAIL, POSITION, QUESTION1,
+	QUESTION2, QUESTION3, QUESTION4, QUESTION5, COMPLETE)
+	VALUES (:employeeID, :companyID, :name, :email, :sname, :semail, :position, 
+	:q1, :q2, :q3, :q4, :q5, :complete)";
+	
+	try 
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare($queryString);
+		$query->bindParam(':employeeID', $array_params['employeeID']);
+		$query->bindParam(':companyID', $array_params['companyID']);
+		$query->bindParam(':name', $array_params['name']);	
+		$query->bindParam(':email', $array_params['email']);
+		$query->bindParam(':sname', $array_params['sname']);
+		$query->bindParam(':semail', $array_params['semail']);
+		$query->bindParam(':position', $array_params['position']);
+		$query->bindParam(':q1', $array_params['q1']);
+		$query->bindParam(':q2', $array_params['q2']);
+		$query->bindParam(':q3', $array_params['q3']);
+		$query->bindParam(':q4', $array_params['q4']);
+		$query->bindParam(':q5', $array_params['q5']);
+		$query->bindParam(':complete', $complete);
+		
+		$result = $query->execute();		
+		
+		$result->finalize();
+		$sqlite->close();
+		
+		return $result;
+	
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
 }
 
 /* 
