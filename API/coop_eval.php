@@ -24,9 +24,9 @@ function coop_eval_switch($getFunctions)
 		switch ($_GET["function"])
 		{
 			case "getStudentEvaluation":
-				if (isset($_GET['STUDENTID']) && isset($_GET['COMPANYID']))
+				if (isset($_GET['studentID']) && isset($_GET['companyID']))
 				{
-					return getStudentEvaluation($_GET["STUDENTID"], $_GET["COMPANYID"]);
+					return getStudentEvaluation($_GET["studentID"], $_GET["companyID"]);
 				}
 				else
 				{
@@ -76,18 +76,18 @@ function coop_eval_switch($getFunctions)
 					return NULL;
 				}
 			case "getCompanies":
-				if ($_GET['StudentID'])
+				if ($_GET['studentID'])
 				{
-					return getCompanies($_GET['StudentID']);
+					return getCompanies($_GET['studentID']);
 				}
 				else
 				{
 					return NULL;
 				}
 			case "addCompany":
-				if ($_POST['StudentID'] && $_POST['name'])
+				if ($_POST['studentID'] && $_POST['name'])
 				{
-					return addCompany($_POST['StudentID'], $_POST['name'], $_POST['address']);
+					return addCompany($_POST['studentID'], $_POST['name'], $_POST['address']);
 				}
 				else 
 				{
@@ -95,9 +95,9 @@ function coop_eval_switch($getFunctions)
 				}
 				
 			case "updateCompany":
-				if (isset($_POST['StudentID']) && isset($_POST['name']))
+				if (isset($_POST['studentID']) && isset($_POST['name']))
 				{
-					return updateCompany($_POST['StudentID'], $_POST['name'], $_POST['address']);
+					return updateCompany($_POST['studentID'], $_POST['name'], $_POST['address']);
 				}
 				else 
 				{
@@ -105,20 +105,20 @@ function coop_eval_switch($getFunctions)
 				}
 				
 			case "getEmployers":
-				if (isset($_GET['CompanyID']))
+				if (isset($_GET['companyID']))
 				{
-					return getEmployer($_GET['CompanyID']);
+					return getEmployer($_GET['companyID']);
 				}
 				else
 				{
 					return NULL;
 				}
 			case "updateEmployer":
-				if (isset($_POST['CompanyID']) && isset($_POST['ID']))
+				if (isset($_POST['companyID']) && isset($_POST['ID']))
 				{
 					return updateEmployer(
 					$_POST['ID'], 
-					$_POST['CompanyID'],
+					$_POST['companyID'],
 					$_POST['fname'],
 					$_POST['lname'],
 					$_POST['email']
@@ -130,10 +130,10 @@ function coop_eval_switch($getFunctions)
 				}
 				// return "Missing " . $_GET["param-name"]
 			case "addEmployer":
-				if (isset($_POST['CompanyID']))
+				if (isset($_POST['companyID']))
 				{
 					return addEmployer(
-						$_POST['CompanyID'], 
+						$_POST['companyID'], 
 						$_POST['fname'], 
 						$_POST['lname'], 
 						$_POST['email']
@@ -145,9 +145,9 @@ function coop_eval_switch($getFunctions)
 				}
 				// return "Missing " . $_GET["param-name"]
 			case "getEmployerEvaluation":
-				if (isset($_GET['EMPLOYEEID']) && isset($_GET['COMPANYID']))
+				if (isset($_GET['employeeID']) && isset($_GET['companyID']))
 				{
-					return getEmployerEvaluation($_GET["EMPLOYEEID"], $_GET["COMPANYID"]);
+					return getEmployerEvaluation($_GET["employeeID"], $_GET["companyID"]);
 				}
 				else
 				{
