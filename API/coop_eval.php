@@ -11,7 +11,8 @@ function coop_eval_switch($getFunctions)
 	$possible_function_url = array(
 		"getStudentEvaluation", "addStudentEvaluation", "updateStudentEvaluation", "addCompany", "updateCompany",
 		"getCompanies", "getEmployers", "updateEmployer", "addEmployer", "getEmployerEvaluation",
-		"updateEmployerEvaluation", "addEmployerEvaluation", "getCoopAdvisor", "getCoopInfo", "getTempLink"
+		"updateEmployerEvaluation", "addEmployerEvaluation", "getCoopAdvisor", "getCoopInfo", "getTempLink", "tempLinkAccessed",
+		"isTempLinkAccessCountReached"
 	);
 
 	if ($getFunctions)
@@ -216,6 +217,24 @@ function coop_eval_switch($getFunctions)
 				else
 				{
 					return "Missing either studentID or companyID parameter";
+				}
+			case "tempLinkAccessed":
+				if (isset($_GET['studentID']) && isset($_GET['companyID']))
+				{
+					return tempLinkAccessed($_GET['studentID'], $_GET['companyID']);
+				}
+				else
+				{
+					return "Missing either studentID or companyID parameter";
+				}
+			case "isTempLinkAccessCountReached":
+				if (isset($_GET['studentID']) && isset($_GET['companyID']) && isset($_GET['accessCap']))
+				{
+					return isTempLinkAccessCountReached($_GET['accessCap'], $_GET['studentID'], $_GET['companyID']);
+				}
+				else
+				{
+					return "Missing parameter";
 				}
 		}
 	}
@@ -760,7 +779,7 @@ function getTempLink($studentID, $companyID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT Link FROM TempLink WHERE STUDENTID = :studentID AND COMPANYID = :companyID");
+		$query = $sqlite->prepare("SELECT LINK FROM TempLink WHERE STUDENTID = :studentID AND COMPANYID = :companyID");
 		$query->bindParam(':studentID', $studentID);
 		$query->bindParam(':companyID', $companyID);		
 		$result = $query->execute();
@@ -770,6 +789,74 @@ function getTempLink($studentID, $companyID)
 		while ($arr = $result->fetchArray(SQLITE3_ASSOC)) 
 		{			
 			array_push($record, $arr);
+		}
+		
+		$result->finalize();
+		$sqlite->close();
+		
+		return $record;
+	
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function tempLinkAccessed($studentID, $companyID)
+{
+	try 
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("UPDATE TempLink SET ACCESSCOUNT = ACCESSCOUNT + 1 WHERE STUDENTID = :studentID AND COMPANYID = :companyID");
+		$query->bindParam(':studentID', $studentID);
+		$query->bindParam(':companyID', $companyID);		
+		$result = $query->execute();
+		
+		$result->finalize();
+		$sqlite->close();
+		
+		return $result;
+	
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function isTempLinkAccessCountReached($accessCap, $studentID, $comapanyID)
+{
+	$record = false;
+	
+	try 
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT ACCESSCOUNT FROM TempLink WHERE STUDENTID = :studentID AND COMPANYID = :companyID");
+		$query->bindParam(':studentID', $studentID);
+		$query->bindParam(':companyID', $companyID);		
+		$result = $query->execute();
+		
+		if($arr = $result->fetchArray(SQLITE3_ASSOC)) 
+		{			
+			if (intval($arr) > intval($accessCap))
+			{
+				$record = true;
+			}
 		}
 		
 		$result->finalize();
