@@ -14,7 +14,8 @@ function student_enrollment_switch($getFunctions)
 					"waitlistStudent", "withdrawStudent", "getSectionEnrolled", "getSectionWaitlist",
 					"getStudentUser", "getProfessorUser", "getSectionProfessor", "updateCourse",
 					"updateSection", "getStudentWaitlist", "enrollFromWaitlist", "withdrawFromWaitlist",
-					"deleteSchedule", "deletePreReq", "deleteTerm", "deleteSectionProfessor");
+          "postSchedule", "getSectionSchedule", "deleteSchedule", "deletePreReq", "deleteTerm",
+          "deleteSectionProfessor");
 				
 	if ($getFunctions)
 	{
@@ -331,6 +332,31 @@ function student_enrollment_switch($getFunctions)
 					&& (isset($_POST["sectionID"]) && $_POST["sectionID"] != null)
 				){
 					return withdrawFromWaitlist($_POST["studentID"], $_POST["sectionID"]);
+				}
+				else
+				{
+					return "Missing a parameter";
+				}
+      // returns: the schedule of a section
+			// params: sectionID
+			case "getSectionSchedule":
+				if (isset($_GET["sectionID"]) && $_GET["sectionID"] != null)
+				{
+					return getSectionSchedule($_GET["sectionID"]);
+				}
+				else
+				{
+					return "Missing sectionID parameter";
+				}
+      // returns: Success or error
+			// params: sectionID, day, start, end
+			case "postSchedule":
+				if ((isset($_POST["sectionID"]) && $_POST["sectionID"] != null)
+          && (isset($_POST["day"]) && $_POST["day"] != null)
+          && (isset($_POST["start"]) && $_POST["start"] != null)
+          && (isset($_POST["end"]) && $_POST["end"] != null)
+				){
+					return postSchedule($_POST["sectionID"]);
 				}
 				else
 				{
@@ -1252,6 +1278,63 @@ function withdrawFromWaitlist($studentID, $sectionID)
 		// clean up any objects
 		$sqlite->close();
 		return "Success";
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function getSectionSchedule($sectionID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM Schedule WHERE SECTION_ID=:sectionID");		
+		$query->bindParam(':sectionID', $sectionID);
+    $result = $query->execute();
+		
+		if ($record = $result->fetchArray(SQLITE3_ASSOC)) 
+		{
+			$result->finalize();
+			// clean up any objects
+			$sqlite->close();
+			return $record;
+		}
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function postSchedule($sectionID, $day, $start, $end)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("INSERT INTO Schedule (SECTION_ID, DAY_OF_WEEK, START_TIME, END_TIME) VALUES (:sectionID, :day, :start, :end)");
+		$query->bindParam(':sectionID', $sectionID);
+		$query->bindParam(':day', $day);
+    $query->bindParam(':start', $start);
+    $query->bindParam(':end', $end);
+		$result = $query->execute();
+		
+		//if it gets here without throwing an error, assume success = true;
+    return "Success";
 	}
 	catch (Exception $exception)
 	{
