@@ -15,7 +15,9 @@ function grading_switch($getFunctions)
 		"getStudentComments",
 		"postLockGrade",
 		"postUpdateGrade",
-		"postGradeComment"
+		"postGradeComment",
+		"getNotificationsForStudentSection",
+		"expireNotification"
 		);
 
 	if ($getFunctions)
@@ -89,6 +91,24 @@ function grading_switch($getFunctions)
 				else
 				{
 					return "Missing required form data! Required: 'user_id', 'grade_id', 'content'";
+				}
+			case "getNotificationsForStudentSection":
+				if (isset($_GET["studentsection_id"]))
+				{
+					return getNotificationsForStudentSection($_GET["studentsection_id"]);
+				}
+				else
+				{
+					return "Missing required param: 'studentsection_id'";
+				}
+			case "expireNotification":
+				if (isset($_POST["id"]))
+				{
+					return expireNotification($_POST["id"]);
+				}
+				else
+				{
+					return "Missing required form data! Required: 'id'";
 				}
 		}
 	}
@@ -337,6 +357,68 @@ function getStudentComments($studentID)
 		
 		$query = $sqlite->prepare("SELECT c.*, g.STUDENT_SECTION_ID FROM Comment as c INNER JOIN Grade as g ON c.GRADE_ID = g.ID WHERE USER_ID=:user_id");
 		$query->bindParam(':user_id', $studentID);
+		$result = $query->execute();
+		
+		$record = array();
+		while($arr=$result->fetchArray(SQLITE3_ASSOC))
+		{
+			array_push($record, $arr);
+		}
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return $record;
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function getNotificationsForStudentSection($ss_id)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("SELECT * FROM Notification WHERE STUDENT_SECTION_ID=:ss_id");
+		$query->bindParam(':ss_id', $ss_id);
+		$result = $query->execute();
+		
+		$record = array();
+		while($arr=$result->fetchArray(SQLITE3_ASSOC))
+		{
+			array_push($record, $arr);
+		}
+		$result->finalize();
+		// clean up any objects
+		$sqlite->close();
+		return $record;
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function expireNotification($notificationID)
+{
+	try
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		$query = $sqlite->prepare("UPDATE Notification SET IS_EXPIRED=1 WHERE ID=:id");
+		$query->bindParam(':id', $notificationID);
 		$result = $query->execute();
 		
 		$record = array();
