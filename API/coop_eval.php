@@ -109,7 +109,7 @@ function coop_eval_switch($getFunctions)
 			case "getEmployers":
 				if (isset($_GET['companyID']))
 				{
-					return getEmployer($_GET['companyID']);
+					return getEmployers($_GET['companyID']);
 				}
 				else
 				{
@@ -524,36 +524,36 @@ function updateCompany($studentID, $name, $address)
 function getEmployers($companyID)
 {
 	try 
-		{
-			$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
-			$sqlite->enableExceptions(true);
-			
-			//prepare query to protect from sql injection
-			$query = $sqlite->prepare("SELECT CoopCompany.*, CoopEmployee.* FROM CoopCompany JOIN CoopEmployee ON CoopCompany.ID = CoopEmployee.COMPANYID WHERE CoopCompany.ID = :companyID");
-			$query->bindParam(':companyID', $companyID);		
-			$result = $query->execute();
-			
-			$record = array();
-			
-			while ($arr = $result->fetchArray(SQLITE3_ASSOC)) 
-			{			
-				array_push($record, $arr);
-			}
-			
-			$result->finalize();
-			$sqlite->close();
-			
-			return $record;
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
 		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT CoopCompany.*, CoopEmployee.* FROM CoopCompany JOIN CoopEmployee ON CoopCompany.ID = CoopEmployee.COMPANYID WHERE CoopCompany.ID = :companyID");
+		$query->bindParam(':companyID', $companyID);		
+		$result = $query->execute();
+		
+		$record = array();
+		
+		while ($arr = $result->fetchArray(SQLITE3_ASSOC)) 
+		{			
+			array_push($record, $arr);
 		}
-		catch (Exception $exception)
+		
+		$result->finalize();
+		$sqlite->close();
+		
+		return $record;
+	
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
 		{
-			if ($GLOBALS ["sqliteDebug"]) 
-			{
-				return $exception->getMessage();
-			}
-			logError($exception);
+			return $exception->getMessage();
 		}
+		logError($exception);
+	}
 }
 
 //need ID here because its the only unique identifier
@@ -561,100 +561,100 @@ function getEmployers($companyID)
 function updateEmployer($ID, $companyID, $fname, $lname, $email)
 {
 	try 
-		{
-			$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
-			$sqlite->enableExceptions(true);
-			
-			//prepare query to protect from sql injection
-			$query = $sqlite->prepare("UPDATE CoopEmployee SET (COMPANYID = :companyID, FIRSTNAME = :fname, LASTNAME = :lname, EMAIL = :email) WHERE ID = :id");
-			$query->bindParam(':companyID', $companyID);
-			$query->bindParam(':fname', $fname);
-			$query->bindParam(':lname', $lname);
-			$query->bindParam(':email', $email);
-			$query->bindParam(':id', $ID);
-			$result = $query->execute();
-			
-			$result->finalize();
-			$sqlite->close();
-			
-			return true; //change this eventually to actually display if it was successful or not
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
 		
-		}
-		catch (Exception $exception)
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("UPDATE CoopEmployee SET (COMPANYID = :companyID, FIRSTNAME = :fname, LASTNAME = :lname, EMAIL = :email) WHERE ID = :id");
+		$query->bindParam(':companyID', $companyID);
+		$query->bindParam(':fname', $fname);
+		$query->bindParam(':lname', $lname);
+		$query->bindParam(':email', $email);
+		$query->bindParam(':id', $ID);
+		$result = $query->execute();
+		
+		$result->finalize();
+		$sqlite->close();
+		
+		return true; //change this eventually to actually display if it was successful or not
+	
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
 		{
-			if ($GLOBALS ["sqliteDebug"]) 
-			{
-				return $exception->getMessage();
-			}
-			logError($exception);
+			return $exception->getMessage();
 		}
+		logError($exception);
+	}
 }
 
 function addEmployer($companyID, $fname, $lname, $email)
 {
 	try 
-		{
-			$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
-			$sqlite->enableExceptions(true);
-			
-			//prepare query to protect from sql injection
-			$query = $sqlite->prepare("INSERT INTO CoopEmployee (COMPANYID, FIRSTNAME, LASTNAME, EMAIL) VALUES (:companyID, :fname, :lname, :email");
-			$query->bindParam(':companyID', $companyID);
-			$query->bindParam(':fname', $fname);
-			$query->bindParam(':lname', $lname);
-			$query->bindParam(':email', $email);
-			$result = $query->execute();
-			
-			$result->finalize();
-			$sqlite->close();
-			
-			return true; //change this eventually to actually display if it was successful or not
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
 		
-		}
-		catch (Exception $exception)
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("INSERT INTO CoopEmployee (COMPANYID, FIRSTNAME, LASTNAME, EMAIL) VALUES (:companyID, :fname, :lname, :email");
+		$query->bindParam(':companyID', $companyID);
+		$query->bindParam(':fname', $fname);
+		$query->bindParam(':lname', $lname);
+		$query->bindParam(':email', $email);
+		$result = $query->execute();
+		
+		$result->finalize();
+		$sqlite->close();
+		
+		return true; //change this eventually to actually display if it was successful or not
+	
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
 		{
-			if ($GLOBALS ["sqliteDebug"]) 
-			{
-				return $exception->getMessage();
-			}
-			logError($exception);
+			return $exception->getMessage();
 		}
+		logError($exception);
+	}
 }
 
 function getEmployerEvaluation($employeeID, $companyID)
 {
 	try 
-		{
-			$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
-			$sqlite->enableExceptions(true);
-			
-			//prepare query to protect from sql injection
-			$query = $sqlite->prepare("SELECT * FROM EmployeeEval WHERE EMPLOYEEID = :employeeID AND COMPANYID = :companyID");
-			$query->bindParam(':employeeID', $employeeID);
-			$query->bindParam(':companyID', $companyID);		
-			$result = $query->execute();
-			
-			$record = array();
-			
-			while ($arr = $result->fetchArray(SQLITE3_ASSOC)) 
-			{			
-				array_push($record, $arr);
-			}
-			
-			$result->finalize();
-			$sqlite->close();
-			
-			return $record;
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
 		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT * FROM EmployeeEval WHERE EMPLOYEEID = :employeeID AND COMPANYID = :companyID");
+		$query->bindParam(':employeeID', $employeeID);
+		$query->bindParam(':companyID', $companyID);		
+		$result = $query->execute();
+		
+		$record = array();
+		
+		while ($arr = $result->fetchArray(SQLITE3_ASSOC)) 
+		{			
+			array_push($record, $arr);
 		}
-		catch (Exception $exception)
+		
+		$result->finalize();
+		$sqlite->close();
+		
+		return $record;
+	
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
 		{
-			if ($GLOBALS ["sqliteDebug"]) 
-			{
-				return $exception->getMessage();
-			}
-			logError($exception);
+			return $exception->getMessage();
 		}
+		logError($exception);
+	}
 }
 
 function updateEmployerEvaluation($array_params)
