@@ -11,7 +11,7 @@ function coop_eval_switch($getFunctions)
 	$possible_function_url = array(
 		"getStudentEvaluation", "addStudentEvaluation", "updateStudentEvaluation", "addCompany", "updateCompany",
 		"getCompanies", "getEmployers", "updateEmployer", "addEmployer", "getEmployerEvaluation",
-		"updateEmployerEvaluation", "addEmployerEvaluation", "getCoopAdvisor", "getCoopInfo"
+		"updateEmployerEvaluation", "addEmployerEvaluation", "getCoopAdvisor", "getCoopInfo", "getTempLink"
 	);
 
 	if ($getFunctions)
@@ -208,6 +208,15 @@ function coop_eval_switch($getFunctions)
 				return getCoopInfo();
 				// else
 				// return "Missing " . $_GET["param-name"]
+			case "getTempLink":
+				if (isset($_GET['studentID']) && isset($_GET['companyID']))
+				{
+					return getTempLink($_GET['studentID'], $_GET['companyID']);
+				}
+				else
+				{
+					return "Missing either studentID or companyID parameter";
+				}
 		}
 	}
 	else
@@ -731,6 +740,42 @@ function addEmployerEvaluation($array_params)
 		$sqlite->close();
 		
 		return $result;
+	
+	}
+	catch (Exception $exception)
+	{
+		if ($GLOBALS ["sqliteDebug"]) 
+		{
+			return $exception->getMessage();
+		}
+		logError($exception);
+	}
+}
+
+function getTempLink($studentID, $companyID)
+{
+	try 
+	{
+		$sqlite = new SQLite3($GLOBALS ["databaseFile"]);
+		$sqlite->enableExceptions(true);
+		
+		//prepare query to protect from sql injection
+		$query = $sqlite->prepare("SELECT Link FROM TempLink WHERE STUDENTID = :studentID AND COMPANYID = :companyID");
+		$query->bindParam(':studentID', $studentID);
+		$query->bindParam(':companyID', $companyID);		
+		$result = $query->execute();
+		
+		$record = array();
+		
+		while ($arr = $result->fetchArray(SQLITE3_ASSOC)) 
+		{			
+			array_push($record, $arr);
+		}
+		
+		$result->finalize();
+		$sqlite->close();
+		
+		return $record;
 	
 	}
 	catch (Exception $exception)
