@@ -40,8 +40,8 @@ INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ROLE) VALUES (
 INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ROLE) VALUES ("Student4", "$2y$10$OPdL0s8h6N61JJHQIpmhGOmy9yuzi38azcjcF/pojNsnBFn0tDcKm", "Jane", "Smith", "Smithe@email.com", "Student");
 INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ROLE) VALUES ("Student5", "$2y$10$OPdL0s8h6N61JJHQIpmhGOmy9yuzi38azcjcF/pojNsnBFn0tDcKm", "Bill", "Smith", "Smithe@email.com", "Student");
 INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ROLE) VALUES ("Student6", "$2y$10$OPdL0s8h6N61JJHQIpmhGOmy9yuzi38azcjcF/pojNsnBFn0tDcKm", "Sophie", "Smith", "Smithe@email.com", "Student");
+INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ROLE) VALUES ("Student7", "$2y$10$OPdL0s8h6N61JJHQIpmhGOmy9yuzi38azcjcF/pojNsnBFn0tDcKm", "John", "Smith", "Smithe@email.com", "Student");
 INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ROLE) VALUES ("Student8", "$2y$10$OPdL0s8h6N61JJHQIpmhGOmy9yuzi38azcjcF/pojNsnBFn0tDcKm", "John", "Smith", "Smithe@email.com", "Student");
-INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ROLE) VALUES ("Student3", "$2y$10$OPdL0s8h6N61JJHQIpmhGOmy9yuzi38azcjcF/pojNsnBFn0tDcKm", "John", "Smith", "Smithe@email.com", "Student");
 INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ROLE) VALUES ("Admin1", "$2y$10$OPdL0s8h6N61JJHQIpmhGOmy9yuzi38azcjcF/pojNsnBFn0tDcKm", "Sammy", "Gray", "Gray@email.com", "Admin");
 INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ROLE) VALUES ("Professor1", "$2y$10$OPdL0s8h6N61JJHQIpmhGOmy9yuzi38azcjcF/pojNsnBFn0tDcKm", "Superman", "Clark", "Clark@email.com", "Professor");
 INSERT INTO User (USERNAME, PASSWORD, FIRSTNAME, LASTNAME, EMAIL, ROLE) VALUES ("Professor2", "$2y$10$OPdL0s8h6N61JJHQIpmhGOmy9yuzi38azcjcF/pojNsnBFn0tDcKm", "Bruce", "Willis", "BWilly@email.com", "Professor");
@@ -53,13 +53,12 @@ INSERT INTO Student (USER_ID, YEAR_LEVEL, GPA) VALUES (4, 2, 4.0);
 INSERT INTO Student (USER_ID, YEAR_LEVEL, GPA) VALUES (5, 2, 4.0);
 INSERT INTO Student (USER_ID, YEAR_LEVEL, GPA) VALUES (6, 2, 4.0);
 INSERT INTO Student (USER_ID, YEAR_LEVEL, GPA) VALUES (7, 2, 4.0);
+INSERT INTO Student (USER_ID, YEAR_LEVEL, GPA) VALUES (8, 2, 4.0);
 
-INSERT INTO Professor (USER_ID) VALUES (1);
-INSERT INTO Professor (USER_ID) VALUES (2);
+INSERT INTO Professor (USER_ID) VALUES (10);
+INSERT INTO Professor (USER_ID) VALUES (11);
 
-INSERT INTO Admin (USER_ID) VALUES (1);
-INSERT INTO Admin (USER_ID) VALUES (2);
-INSERT INTO Admin (USER_ID) VALUES (3);
+INSERT INTO Admin (USER_ID) VALUES (9);
 
 /*
 Co-op Eval Data
