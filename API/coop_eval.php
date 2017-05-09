@@ -62,6 +62,7 @@ function coop_eval_switch($getFunctions)
 						'companyID'=>$_POST['companyID'],
 						'name'=>$_POST['name'],
 						'email'=>$_POST['email'],
+						'ename'=>$_POST['ename'],
 						'eemail'=>$_POST['eemail'],
 						'position'=>$_POST['position'],
 						'q1'=>$_POST['q1'],
