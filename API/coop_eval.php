@@ -180,7 +180,7 @@ function coop_eval_switch($getFunctions)
 			case "addEmployerEvaluation":
 				if (isset($_POST['employeeID']) && isset($_POST['companyID']))
 				{
-					return updateEmployerEvaluation(array(
+					return addEmployerEvaluation(array(
 						'employeeID'=>$_POST['employeeID'],
 						'companyID'=>$_POST['companyID'],
 						'name'=>$_POST['name'],
