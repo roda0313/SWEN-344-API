@@ -352,9 +352,9 @@ function updateStudentEvaluation($array_params)
 	}
 	
 	$queryString = "UPDATE StudentEval SET
-	(STUDENTID = :studentID, COMPANYID = :companyID, NAME = :name, 
+	STUDENTID = :studentID, COMPANYID = :companyID, NAME = :name, 
 	EMAIL = :email, ENAME = :ename, EEMAIL = :eemail, POSITION = :position, 
-	QUESTION1 = :q1, QUESTION2 = :q2, QUESTION3 = :q3, QUESTION4 = :q4, QUESTION5 = :q5, COMPLETE = :complete)
+	QUESTION1 = :q1, QUESTION2 = :q2, QUESTION3 = :q3, QUESTION4 = :q4, QUESTION5 = :q5, COMPLETE = :complete
 	WHERE STUDENTID = :studentID AND COMPANYID = :companyID";
 	
 	try 
@@ -641,9 +641,9 @@ function updateEmployerEvaluation($array_params)
 	}
 	
 	$queryString = "UPDATE EmployeeEval SET
-	(EMPLOYEEID = :employeeID, COMPANYID = :companyID, NAME = :name, 
+	EMPLOYEEID = :employeeID, COMPANYID = :companyID, NAME = :name, 
 	EMAIL = :email, SNAME = :sname, SEMAIL = :semail, POSITION = :position, 
-	QUESTION1 = :q1, QUESTION2 = :q2, QUESTION3 = :q3, QUESTION4 = :q4, QUESTION5 = :q5, COMPLETE = :complete)
+	QUESTION1 = :q1, QUESTION2 = :q2, QUESTION3 = :q3, QUESTION4 = :q4, QUESTION5 = :q5, COMPLETE = :complete
 	WHERE EMPLOYEEID = :employeeID AND COMPANYID = :companyID";
 	
 	try 
