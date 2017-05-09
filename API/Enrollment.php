@@ -561,7 +561,7 @@ function getSectionEnrolled($sectionID)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("SELECT STUDENT_ID FROM Student_Section WHERE SECTION_ID=:sectionID");
+		$query = $sqlite->prepare("SELECT ID, STUDENT_ID FROM Student_Section WHERE SECTION_ID=:sectionID");
 		$query->bindParam(':sectionID', $sectionID);
 		$result = $query->execute();
 		
