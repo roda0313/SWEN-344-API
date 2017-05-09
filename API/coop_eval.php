@@ -216,7 +216,7 @@ function coop_eval_switch($getFunctions)
 }
 
 //Define Functions Here
-function getStudentEvaluation($studentID, $comapanyID)
+function getStudentEvaluation($studentID, $companyID)
 {
 	try 
 	{
