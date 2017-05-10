@@ -598,7 +598,7 @@ function addEmployer($companyID, $fname, $lname, $email)
 		$sqlite->enableExceptions(true);
 		
 		//prepare query to protect from sql injection
-		$query = $sqlite->prepare("INSERT INTO CoopEmployee (COMPANYID, FIRSTNAME, LASTNAME, EMAIL) VALUES (:companyID, :fname, :lname, :email");
+		$query = $sqlite->prepare("INSERT INTO CoopEmployee (COMPANYID, FIRSTNAME, LASTNAME, EMAIL) VALUES (:companyID, :fname, :lname, :email)");
 		$query->bindParam(':companyID', $companyID);
 		$query->bindParam(':fname', $fname);
 		$query->bindParam(':lname', $lname);
