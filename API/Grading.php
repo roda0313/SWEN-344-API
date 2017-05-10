@@ -239,7 +239,6 @@ function postLockGrade($studentSectionID)
 
 		// prepend course name to notification message
 		$result = $sqlite3Result->fetchArray(SQLITE3_ASSOC);
-		// return $result['VALUE'];
 		$gradeValue = $result['VALUE'];
         $sqlite->close();
 
