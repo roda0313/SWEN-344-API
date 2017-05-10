@@ -231,7 +231,23 @@ function postLockGrade($studentSectionID)
 		$query = $sqlite->prepare("UPDATE Grade SET IS_LOCKED=1 WHERE STUDENT_SECTION_ID=:studentSectionID");
 		$query->bindParam(':studentSectionID', $studentSectionID);
         $query->execute();
+
+		// if their grade was lower than a 70, notify them about it
+		$gradeQuery = $sqlite->prepare("SELECT VALUE FROM Grade WHERE STUDENT_SECTION_ID=:studentSectionID");
+		$gradeQuery->bindParam(':studentSectionID', $studentSectionID);
+		$sqlite3Result = $gradeQuery->execute();
+
+		// prepend course name to notification message
+		$result = $sqlite3Result->fetchArray(SQLITE3_ASSOC);
+		// return $result['VALUE'];
+		$gradeValue = $result['VALUE'];
         $sqlite->close();
+
+		// additional warning if below a 70 / "C"
+		if ($gradeValue < 70)
+		{
+			createNotification($studentSectionID, 'You have received a grade lower than a C');
+		}
 
 		// create the notification
 		return createNotification($studentSectionID, 'Your grade has been locked in');
